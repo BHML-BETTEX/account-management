@@ -26,7 +26,7 @@
                     <option value="">Select Type</option>
                     <option value="xlsx">XLSX</option>
                     <option value="csv">CSV</option>
-                    <option value="xls">XLS</option>
+                    <option value="xls">XLSs</option>
                 </select>
                 <button type="submit" class="btn btn-outline-success">Export</button>
             </form>
