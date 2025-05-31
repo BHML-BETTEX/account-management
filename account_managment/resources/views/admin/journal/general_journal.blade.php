@@ -92,7 +92,7 @@
 
                             <div class="form-group">
                                 <label for="voucherno">Voucher No</label>
-                                <input type="text" name="voucherno" class="form-control" required>
+                                <input type="text" name="voucherno" class="form-control">
                             </div>
 
                             <div class="form-group">
@@ -111,39 +111,37 @@
                                     <th>Credit</th>
                                 </tr>
                             </thead>
-                                <tbody>
-                                    @for ($i = 0; $i < 10; $i++)
-                                        <tr>
-                                        <td>
-                                            <select name="entries[{{ $i }}][accountscode]" class="form-control">
-                                                @foreach ($ac_cartofacc as $ac_cartofaccs)
-                                                <option value="{{$ac_cartofaccs->id}}">{{$ac_cartofaccs->accountsheadname}}</option>
-                                                @endforeach
-                                            </select>
-                                        </td>
-                                        <td><input type="text" name="entries[{{ $i }}][naration]" class="form-control"></td>
-                                        <td><input type="number" name="entries[{{ $i }}][debit]" class="form-control debit" value="0" step="0.01"></td>
-                                        <td><input type="number" name="entries[{{ $i }}][credit]" class="form-control credit" value="0" step="0.01"></td>
-                                        </tr>
-                                        @endfor
-                                </tbody>
-
-                                <!-- Totals Row -->
-                                <tfoot>
+                            <tbody>
+                                @for ($i = 0; $i < 5; $i++)
                                     <tr>
-                                        <td colspan="2" style="text-align: right;"><strong>Total:</strong></td>
-                                        <td><input type="text" id="total-debit" class="form-control" readonly></td>
-                                        <td><input type="text" id="total-credit" class="form-control" readonly></td>
+                                    <td>
+                                        <select name="entries[{{ $i }}][accountscode]" class="form-control">
+                                            @foreach ($ac_cartofacc as $ac_cartofaccs)
+                                            <option value="{{$ac_cartofaccs->accountscode}}">{{$ac_cartofaccs->accountsheadname}}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                    <td><input type="text" name="entries[{{ $i }}][naration]" class="form-control"></td>
+                                    <td><input type="number" name="entries[{{ $i }}][debit]" class="form-control debit" value="0" step="0.01"></td>
+                                    <td><input type="number" name="entries[{{ $i }}][credit]" class="form-control credit" value="0" step="0.01"></td>
                                     </tr>
-                                </tfoot>
-                            </table>
+                                    @endfor
+                            </tbody>
+
+                            <!-- Totals Row -->
+                            <tfoot>
+                                <tr>
+                                    <td colspan="2" style="text-align: right;"><strong>Total:</strong></td>
+                                    <td><input type="text" id="total-debit" class="form-control" readonly></td>
+                                    <td><input type="text" id="total-credit" class="form-control" readonly></td>
+                                </tr>
+                            </tfoot>
+                        </table>
 
                         <!-- Save Button -->
                         <div class="form-actions">
                             <button type="submit" class="btn btn-success">Save</button>
                         </div>
-
-
                     </form>
                 </div>
             </div>

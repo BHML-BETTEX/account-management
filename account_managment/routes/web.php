@@ -85,12 +85,16 @@ Route::post('/general_journal/store', [AccuntingController::class, 'general_jour
 
 //Adjustmanet Journal
 Route::get('/adjustment_journal', [AccuntingController::class, 'adjustment_journal'])->name('adjustment_journal');
+Route::post('/adjustment_journal/store', [AccuntingController::class, 'adjustment_journal_store'])->name('adjustment_journal_store');
+
 
 //unposted Journal
 Route::get('/unposted_journal', [AccuntingController::class, 'unposted_journal'])->name('unposted_journal');
 
 //others payment Entry
 Route::get('/others_payment', [AccuntingController::class, 'others_payment'])->name('others_payment');
+Route::post('/others_payment/store', [AccuntingController::class, 'others_payment_store'])->name('others_payment_store');
+
 
 //Credit Note 
 Route::get('/credit_note', [AccuntingController::class, 'credit_note'])->name('credit_note');

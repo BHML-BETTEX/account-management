@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('ac_transactionmain', function (Blueprint $table) {
             $table->id();
-            $table->integer('selfid');
+            $table->integer('selfid')->unique()->nullable();
             $table->integer('companyid')->nullable();
             $table->integer('trcode')->nullable();
             $table->unsignedInteger('voucherno')->unique();

@@ -418,7 +418,7 @@
         </a>
         <ul class="nav nav-second-level collapse" aria-expanded="false">
           <li class="sub-menu-item-vendors">
-            <a href="{{route('posting_control')}}">
+            <a href="{{route('add_posting_control')}}">
               <i class="fa fa-user-o menu-icon"></i>
               <span class="sub-menu-text">
                 Postiong Control</span>

@@ -174,7 +174,7 @@ class AccuntingController extends Controller
             'main_head' => $main_head,
             'ac_category' => $ac_category,
             'ac_cartofacc' => $ac_cartofacc,
-            'search'=> $search,
+            'search' => $search,
         ]);
     }
 
@@ -234,10 +234,16 @@ class AccuntingController extends Controller
 
         try {
             $main = AcTransactionMain::create([
+                'selfid' => $request->input('selfid'),
                 'dateoftransaction' => $request->input('dateoftransaction'),
                 'voucherno' => $request->input('voucherno'),
+                'trcode' => 3,
+                'vouchertype' => 3,
                 'particulars' => $request->input('particulars'),
+                'created_at' => Carbon::now(),
             ]);
+            // Ensure you get the auto-generated voucherno from DB
+            $main->refresh();
 
             foreach ($request->input('entries') as $entry) {
                 // Check if this entry is not empty (example criteria)
@@ -272,6 +278,49 @@ class AccuntingController extends Controller
         ]);
     }
 
+    public function adjustment_journal_store(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            $main = AcTransactionMain::create([
+                'selfid' => $request->input('selfid'),
+                'dateoftransaction' => $request->input('dateoftransaction'),
+                'trcode' => 3,
+                'vouchertype' => 3,
+                'particulars' => 'Adjustment Entry',
+                'created_at' => Carbon::now(),
+            ]);
+
+            $main->refresh(); // Ensure voucherno is set if it's auto-generated
+
+            foreach ($request->input('entries') as $entry) {
+                if (
+                    !empty($entry['accountscode']) &&
+                    (
+                        (!empty($entry['debit']) && $entry['debit'] != 0) ||
+                        (!empty($entry['credit']) && $entry['credit'] != 0)
+                    )
+                ) {
+                    AcTransactionDetail::create([
+                        'voucherno' => $main->voucherno,
+                        'accountscode' => $entry['accountscode'],
+                        'naration' => $entry['naration'] ?? '',
+                        'debit' => $entry['debit'] ?? 0,
+                        'credit' => $entry['credit'] ?? 0,
+                    ]);
+                }
+            }
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Adjustment Journal Entry saved successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Error saving data: ' . $e->getMessage());
+        }
+    }
+
+
     function unposted_journal()
     {
         return view('admin.unpostedjournal.unposted_journal');
@@ -280,12 +329,55 @@ class AccuntingController extends Controller
     function others_payment()
     {
         $acoounts_head = AcMainhead::all();
-        $ac_chart_of_acc = AcCartofacc::all();
+        $ac_cartofacc = AcCartofacc::all();
         return view('admin.otherspayment.others_payment', [
             'acoounts_head' => $acoounts_head,
-            'ac_chart_of_acc' => $ac_chart_of_acc,
+            'ac_cartofacc' => $ac_cartofacc,
         ]);
     }
+
+    function others_payment_store(Request $request){
+         DB::beginTransaction();
+
+        try {
+            $main = AcTransactionMain::create([
+                'selfid' => $request->input('selfid'),
+                'dateoftransaction' => $request->input('dateoftransaction'),
+                'trcode' => 1,
+                'vouchertype' => 1,
+                'particulars' => $request->input('particulars'),
+                'created_at' => Carbon::now(),
+            ]);
+
+            $main->refresh(); // Ensure voucherno is set if it's auto-generated
+
+            foreach ($request->input('entries') as $entry) {
+                if (
+                    !empty($entry['accountscode']) &&
+                    (
+                        (!empty($entry['debit']) && $entry['debit'] != 0) ||
+                        (!empty($entry['credit']) && $entry['credit'] != 0)
+                    )
+                ) {
+                    AcTransactionDetail::create([
+                        'voucherno' => $main->voucherno,
+                        'accountscode' => $entry['accountscode'],
+                        'naration' => $entry['naration'] ?? '',
+                        'debit' => $entry['debit'] ?? 0,
+                        'credit' => $entry['credit'] ?? 0,
+                    ]);
+                }
+            }
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Adjustment Journal Entry saved successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Error saving data: ' . $e->getMessage());
+        }
+    }
+    // transaation main 1 record
+    //transetion detail 2 record
 
     function credit_note()
     {
