@@ -16,15 +16,12 @@
                             <input type="date" id="name" name="accountsheadname" class="form-control" value="">
                         </div>
 
-                        <div class="select-placeholder form-group" app-field-wrapper="account_detail_type_id"><label for="account_detail_type_id" class="control-label">Payment Head</label>
-                            <select name="category" id="edit_category" class="selectpicker" data-width="100%">
-
+                        <div class="select-placeholder form-group" app-field-wrapper="account_detail_type_id"><label for="account_detail_type_id" class="control-label">Account Head</label>
+                            <select name="partycode" id="partycode" class="selectpicker" data-width="100%">
+                                @foreach($supplier_info as $suppliers)
+                                <option value="{{ $suppliers->id }}">{{ $suppliers->name }}</option>
+                                @endforeach
                             </select>
-                        </div>
-
-                        <div class="form-group" app-field-wrapper="account_detail_type_id">
-                            <label for="form-label" class="control-label">Amount</label>
-                            <input type="text" id="name" name="accountsheadname" class="form-control" value="">
                         </div>
 
                         <div class="form-group" app-field-wrapper="account_detail_type_id">

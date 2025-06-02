@@ -6,8 +6,8 @@
 
             <!-- Button Group -->
             <div class="col-lg-6 col-md-12 mb-2 d-flex flex-wrap gap-2">
-                <button class="btn btn-success">
-                    Print Chart Of Account
+                <button class="btn btn-primary" data-toggle="modal" data-target="#printview">
+                    PrintView
                 </button>
 
                 <button class="btn btn-primary" data-toggle="modal" data-target="#account-modal">
@@ -140,6 +140,55 @@
     </div>
 </div>
 
+<!--printview-->
+<div class="modal fade" id="printview">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Chart of Accounts - Print View</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="font-size: 1.5rem;">&times;</button>
+            </div>
+            <div class="modal-body">
+                @foreach($grouped as $typeName => $controls)
+                    <h5>{{ $typeName }}</h5>
+                    @foreach($controls as $controlName => $mainheads)
+                        <h6>{{ $controlName }}</h6>
+                        @foreach($mainheads as $mainheadName => $accounts)
+                            <h6>{{ $mainheadName }}</h6>
+                            <table class="table table-bordered table-sm" style="width: 100%; border-collapse: collapse; page-break-inside: auto;">
+                                <thead style="background-color: #f8f9fa;">
+                                    <tr>
+                                        <th style="width: 20%; padding: 6px;">Account Code</th>
+                                        <th style="padding: 6px;">Account Name</th>
+                                        <th style="width: 15%; text-align: right; padding: 6px;">Balance</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php $subtotal = 0; @endphp
+                                    @foreach($accounts as $account)
+                                        <tr style="page-break-inside: avoid;">
+                                            <td style="padding: 6px;">{{ $account->accountscode }}</td>
+                                            <td style="padding: 6px;">{{ $account->accountsheadname }}</td>
+                                            <td style="padding: 6px; text-align: right;">{{ number_format($account->balance, 2) }}</td>
+                                        </tr>
+                                        @php $subtotal += $account->balance; @endphp
+                                    @endforeach
+                                    <tr style="font-weight: bold; background-color: #f1f1f1;">
+                                        <td colspan="2" style="text-align: right; padding: 6px;">Total: {{ $mainheadName }}</td>
+                                        <td style="padding: 6px; text-align: right;">{{ number_format($subtotal, 2) }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        @endforeach
+                    @endforeach
+                @endforeach
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 <!-- Edit Account Modal  -->
 <div class="modal fade" id="account-modaledit">
     <div class="modal-dialog modal-md">
@@ -177,6 +226,8 @@
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-info btn-submit">Update</button>
                         </div>
+                    </div>
+
             </form>
 
         </div>
@@ -184,7 +235,6 @@
 </div>
 
 <!-- Add MainHead -->
-
 <div class="modal fade" id="mainhead">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
@@ -221,11 +271,17 @@
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-info btn-submit">Update</button>
                         </div>
+                    </div>
+
             </form>
 
         </div>
     </div>
 </div>
+
+
+
+
 @endsection
 
 <script>

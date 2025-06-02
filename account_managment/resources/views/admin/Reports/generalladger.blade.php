@@ -55,13 +55,12 @@
         </div>
     </div>
 </div>
+
 <script>
     document.getElementById('balanceForm').addEventListener('submit', function(e) {
         e.preventDefault(); // Prevent default form submission
-
         const fromDate = document.getElementById('from_date').value;
         const toDate = document.getElementById('to_date').value;
-
         if (!fromDate || !toDate) {
             alert("Please select both dates.");
             return;

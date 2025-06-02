@@ -4,7 +4,7 @@
     <div class="col-md-6">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Others Payments</h4>
+                <h4 class="modal-title">Adjusting Entries</h4>
             </div>
             <form action="{{ route('adjustment_journal_store') }}" method="POST">
                 @csrf

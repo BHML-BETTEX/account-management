@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\ac_type;
 use App\Models\ac_control;
+use App\Models\ac_supplier;
 use App\Models\AcCategory;
 use App\Models\AcMainhead;
 use App\Models\AcCartofacc;
@@ -166,15 +167,22 @@ class AccuntingController extends Controller
         } else {
             $ac_cartofacc = AcCartofacc::paginate(13);
         }
+        $data = DB::table('vw_chartofaccounts')->get();
 
+        // Grouping the results for the hierarchical Blade display
+        $grouped = $data->groupBy('typename')->map(function ($controls) {
+            return $controls->groupBy('controlname')->map(function ($mainheads) {
+                return $mainheads->groupBy('mainheadname');
+            });
+        });
         $main_head = AcMainhead::all();
         $ac_category = AcCategory::all();
-
         return view('admin.chartofacc.chart_of_account', [
             'main_head' => $main_head,
             'ac_category' => $ac_category,
             'ac_cartofacc' => $ac_cartofacc,
             'search' => $search,
+            'grouped'=>$grouped,
         ]);
     }
 
@@ -210,6 +218,19 @@ class AccuntingController extends Controller
 
         return back()->with('success', 'Account updated successfully.');
     }
+
+    function chart_of_account_report()
+    {
+        // Call the stored procedure
+        $result = DB::select('CALL vw_chartofaccounts()');
+
+        // Return the view with the result
+        return view('admin.chartofacc.chart_of_account_report', [
+            dd($result),
+            'result' => $result,
+        ]);
+    }
+
 
     //general_journal
     function general_journal()
@@ -336,8 +357,9 @@ class AccuntingController extends Controller
         ]);
     }
 
-    function others_payment_store(Request $request){
-         DB::beginTransaction();
+    function others_payment_store(Request $request)
+    {
+        DB::beginTransaction();
 
         try {
             $main = AcTransactionMain::create([
@@ -381,6 +403,9 @@ class AccuntingController extends Controller
 
     function credit_note()
     {
-        return view('admin.CreditNote.credit_note');
+        $supplier_info = ac_supplier::all();
+        return view('admin.CreditNote.credit_note', [
+            'supplier_info' => $supplier_info,
+        ]);
     }
 }

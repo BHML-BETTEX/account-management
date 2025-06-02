@@ -77,6 +77,8 @@ Route::post('/vendor/update', [VendorController::class, 'vendor_update'])->name(
 Route::get('/chart_of_account', [AccuntingController::class, 'chart_of_account'])->name('chart_of_account');
 Route::post('/chart_of_account/store', [AccuntingController::class, 'chart_of_account_store'])->name('chart_of_account_store');
 Route::post('/chart-of-account/update', [AccuntingController::class, 'chart_of_account_update'])->name('chart_of_account_update');
+Route::get('/chart_of_account/report', [AccuntingController::class, 'chart_of_account_report'])->name('chart_of_account_report');
+
 
 //General journal
 Route::get('/general_journal', [AccuntingController::class, 'general_journal'])->name('general_journal');
