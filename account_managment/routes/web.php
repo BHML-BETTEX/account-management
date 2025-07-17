@@ -20,7 +20,7 @@ use App\Http\Controllers\VendorController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 Auth::routes();
@@ -84,6 +84,12 @@ Route::get('/chart_of_account/report', [AccuntingController::class, 'chart_of_ac
 Route::get('/general_journal', [AccuntingController::class, 'general_journal'])->name('general_journal');
 Route::get('/add_general_journal', [AccuntingController::class, 'add_general_journal'])->name('add_general_journal');
 Route::post('/general_journal/store', [AccuntingController::class, 'general_journal_store'])->name('general_journal_store');
+Route::get('/general_journal/list', [AccuntingController::class, 'general_journal_list'])->name('general_journal_list');
+Route::get('/general-journal/{id}', [AccuntingController::class, 'show'])->name('edit_genaral_journal');
+Route::put('/general-journal/{id}', [AccuntingController::class, 'update'])->name('general_journal_update');
+
+
+
 
 //Adjustmanet Journal
 Route::get('/adjustment_journal', [AccuntingController::class, 'adjustment_journal'])->name('adjustment_journal');
@@ -100,6 +106,8 @@ Route::post('/others_payment/store', [AccuntingController::class, 'others_paymen
 
 //Credit Note 
 Route::get('/credit_note', [AccuntingController::class, 'credit_note'])->name('credit_note');
+Route::post('/credit_note/store', [AccuntingController::class, 'credit_note_store'])->name('credit_note_store');
+
 
 
 
@@ -114,8 +122,11 @@ Route::post('/posting_control/store', [SettingsController::class, 'posting_contr
 Route::get('/generalladger/reports', [ReportsController::class, 'generalladger'])->name('generalladger');
 Route::get('/cashbook/reports', [ReportsController::class, 'cashbook'])->name('cashbook');
 Route::get('/bankbook/reports', [ReportsController::class, 'bankbook'])->name('bankbook');
+Route::get('/trialbalance/reports', [ReportsController::class, 'trialbalance'])->name('trialbalance');
 Route::get('/profit&loss/reports', [ReportsController::class, 'profit_loss'])->name('profit_loss');
 Route::get('/balance_sheet/reports', [ReportsController::class, 'balance_sheet'])->name('balance_sheet');
+Route::get('/voucher_list/reports', [ReportsController::class, 'voucher_list'])->name('voucher_list');
+
 
 
 

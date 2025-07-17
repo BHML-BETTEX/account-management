@@ -370,7 +370,7 @@
             </a>
           </li>
           <li class="sub-menu-item-purchase-items">
-            <a href="{{route('general_journal')}}">
+            <a href="{{route('general_journal_list')}}">
               <i class="fa fa-clone menu-icon menu-icon"></i>
               <span class="sub-menu-text">Genaral Journal</span>
             </a>
@@ -379,7 +379,7 @@
           <li class="sub-menu-item-purchase-items">
             <a href="{{route('adjustment_journal')}}">
               <i class="fa fa-clone menu-icon menu-icon"></i>
-              <span class="sub-menu-text">Adjustment Journal</span>
+              <span class="sub-menu-text">Adjust Journal</span>
             </a>
           </li>
 
@@ -544,7 +544,7 @@
             </a>
           </li>
           <li class="sub-menu-item-purchase-items">
-            <a href="">
+            <a href="{{route('trialbalance')}}">
               <i class="fa fa-clone menu-icon menu-icon"></i>
               <span class="sub-menu-text">
                 Trail Balance</span>
@@ -580,6 +580,14 @@
               <i class="fa fa-clone menu-icon menu-icon"></i>
               <span class="sub-menu-text">
                 Vendor Ladger</span>
+            </a>
+          </li>
+
+          <li class="sub-menu-item-purchase-items">
+            <a href="{{route('voucher_list')}}">
+              <i class="fa fa-clone menu-icon menu-icon"></i>
+              <span class="sub-menu-text">
+                Voucher List</span>
             </a>
           </li>
 
@@ -1324,7 +1332,14 @@
               <li class="sub-menu-item-purchase-items">
                 <a href="{{route('general_journal')}}">
                   <i class="fa fa-clone menu-icon menu-icon"></i>
-                  <span class="sub-menu-text">Genaral Journal</span>
+                  <span class="sub-menu-text">Genaral Journals</span>
+                </a>
+              </li>
+
+              <li class="sub-menu-item-purchase-items">
+                <a href="">
+                  <i class="fa fa-clone menu-icon menu-icon"></i>
+                  <span class="sub-menu-text">Journal Items</span>
                 </a>
               </li>
 

@@ -31,10 +31,10 @@
         width: 100%;
         border-collapse: collapse;
         margin-top: 20px;
+        background-color: white;
     }
 
-    th,
-    td {
+    th, td {
         padding: 8px;
         border: 1px solid #ccc;
         text-align: left;
@@ -49,6 +49,13 @@
         margin-right: 10px;
         cursor: pointer;
     }
+
+    .contain {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
 </style>
 
 <div class="contain">
@@ -57,32 +64,36 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-md-12">
-                        <h4>General Journal</h4>
+                        <h4>{{ isset($entry) ? 'Edit' : 'New' }} General Journal</h4>
+
                         @if(session('success'))
                         <div style="color: green;">{{ session('success') }}</div>
                         @elseif(session('error'))
                         <div style="color: red;">{{ session('error') }}</div>
                         @endif
 
-                        <form method="POST" action="{{ route('general_journal_store') }}">
+                        <form method="POST" action="{{ isset($entry) ? route('general_journal_update', $entry->id) : route('general_journal_store') }}">
                             @csrf
+                            @if(isset($entry)) @method('PUT') @endif
 
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="date">Date</label>
-                                    <input type="date" name="dateoftransaction" class="form-control" value="{{ date('Y-m-d') }}">
+                                    <input type="date" name="dateoftransaction" class="form-control"
+                                           value="{{ old('dateoftransaction', isset($entry) ? $entry->dateoftransaction : date('Y-m-d')) }}">
                                 </div>
                                 <div class="form-group">
                                     <label for="manualvoucherno">Manual Voucher No</label>
-                                    <input type="text" name="manualvoucherno" class="form-control">
+                                    <input type="text" name="manualvoucherno" class="form-control"
+                                           value="{{ old('manualvoucherno', $entry->manualvoucherno ?? '') }}">
                                 </div>
                                 <div class="form-group">
                                     <label for="particulars">Particulars</label>
-                                    <input type="text" name="particulars" class="form-control" required>
+                                    <input type="text" name="particulars" class="form-control" required
+                                           value="{{ old('particulars', $entry->particulars ?? '') }}">
                                 </div>
                             </div>
 
-                            <!-- Journal Entries Table -->
                             <table id="journal-entries-table">
                                 <thead style="background-color: #e5f4f9">
                                     <tr>
@@ -94,20 +105,42 @@
                                     </tr>
                                 </thead>
                                 <tbody id="entries-body">
-                                    <!-- Initial row -->
-                                    <tr>
-                                        <td>
-                                            <select name="entries[0][accountscode]" class="form-control">
-                                                @foreach ($ac_cartofacc as $ac_cartofaccs)
-                                                <option value="{{ $ac_cartofaccs->accountscode }}">{{ $ac_cartofaccs->accountsheadname }}</option>
-                                                @endforeach
-                                            </select>
-                                        </td>
-                                        <td><input type="text" name="entries[0][naration]" class="form-control"></td>
-                                        <td><input type="number" name="entries[0][debit]" class="form-control debit" value="0" step="0.01"></td>
-                                        <td><input type="number" name="entries[0][credit]" class="form-control credit" value="0" step="0.01"></td>
-                                        <td><button type="button" class="btn btn-danger remove-row">-</button></td>
-                                    </tr>
+                                    @if(isset($entry) && $entry->details)
+                                        @foreach($entry->details as $index => $detail)
+                                        <tr>
+                                            <td>
+                                                <select name="entries[{{ $index }}][accountscode]" class="form-control">
+                                                    @foreach ($ac_cartofacc as $ac_cartofaccs)
+                                                        <option value="{{ $ac_cartofaccs->accountscode }}"
+                                                            {{ $ac_cartofaccs->accountscode == $detail->accountscode ? 'selected' : '' }}>
+                                                            {{ $ac_cartofaccs->accountsheadname }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td><input type="text" name="entries[{{ $index }}][naration]" class="form-control" value="{{ $detail->naration }}"></td>
+                                            <td><input type="number" name="entries[{{ $index }}][debit]" class="form-control debit" value="{{ $detail->debit }}" step="0.01"></td>
+                                            <td><input type="number" name="entries[{{ $index }}][credit]" class="form-control credit" value="{{ $detail->credit }}" step="0.01"></td>
+                                            <td><button type="button" class="btn btn-danger remove-row">-</button></td>
+                                        </tr>
+                                        @endforeach
+                                        @php $rowCount = count($entry->details); @endphp
+                                    @else
+                                        <tr>
+                                            <td>
+                                                <select name="entries[0][accountscode]" class="form-control">
+                                                    @foreach ($ac_cartofacc as $ac_cartofaccs)
+                                                    <option value="{{ $ac_cartofaccs->accountscode }}">{{ $ac_cartofaccs->accountsheadname }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td><input type="text" name="entries[0][naration]" class="form-control"></td>
+                                            <td><input type="number" name="entries[0][debit]" class="form-control debit" value="0" step="0.01"></td>
+                                            <td><input type="number" name="entries[0][credit]" class="form-control credit" value="0" step="0.01"></td>
+                                            <td><button type="button" class="btn btn-danger remove-row">Remove</button></td>
+                                        </tr>
+                                        @php $rowCount = 1; @endphp
+                                    @endif
                                 </tbody>
                                 <tfoot>
                                     <tr>
@@ -121,7 +154,7 @@
 
                             <div class="form-actions">
                                 <button type="button" id="add-row" class="btn btn-primary">Add Row</button>
-                                <button type="submit" class="btn btn-success">Save</button>
+                                <button type="submit" class="btn btn-success">{{ isset($entry) ? 'Update' : 'Save' }}</button>
                             </div>
 
                         </form>
@@ -132,15 +165,11 @@
     </div>
 </div>
 
-
-
-
 <script>
-    let rowCount = 1;
+    let rowCount = {{ $rowCount ?? 1 }};
 
     function calculateTotals() {
-        let totalDebit = 0,
-            totalCredit = 0;
+        let totalDebit = 0, totalCredit = 0;
         document.querySelectorAll('.debit').forEach(input => {
             totalDebit += parseFloat(input.value) || 0;
         });
@@ -184,13 +213,15 @@
         });
     }
 
-    // Initial setup for first row
     document.querySelectorAll('.debit, .credit').forEach(input => {
         input.addEventListener('input', calculateTotals);
     });
-    document.querySelector('.remove-row').addEventListener('click', function() {
-        this.closest('tr').remove();
-        calculateTotals();
+
+    document.querySelectorAll('.remove-row').forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.closest('tr').remove();
+            calculateTotals();
+        });
     });
 
     window.addEventListener('DOMContentLoaded', calculateTotals);

@@ -21,7 +21,7 @@ class AcCartofacc extends Model
 
     function rel_to_AcMainhead()
     {
-        return $this->belongsTo(AcMainhead::class, 'mainhead_id');
+         return $this->belongsTo(AcMainhead::class,'id');
     }
     
 }

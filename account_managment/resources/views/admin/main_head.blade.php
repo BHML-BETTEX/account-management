@@ -26,7 +26,7 @@
                             <td>{{$main_heads->controlcode}}</td>
                             <td>{{$main_heads->mainheadname}}</td>
                             <td><span class="label label-success"><a href="">Edit</a></span>
-                                <span class="label label-danger"><a href="{{route('main_head_delete', $main_heads->mainhead_id)}}" onclick="return confirm('Are you sure you want to delete this item?')">Delete</a></span>
+                                <span class="label label-danger"><a href="" onclick="return confirm('Are you sure you want to delete this item?')">Delete</a></span>
                             </td>
                        </tr>
                        @endforeach

@@ -165,7 +165,7 @@ class AccuntingController extends Controller
         if ($search != '') {
             $ac_cartofacc = AcCartofacc::where('accountsheadname', 'LIKE', "%$search%")->paginate(13);
         } else {
-            $ac_cartofacc = AcCartofacc::paginate(13);
+            $ac_cartofacc = AcCartofacc::paginate(30);
         }
         $data = DB::table('vw_chartofaccounts')->get();
 
@@ -178,11 +178,12 @@ class AccuntingController extends Controller
         $main_head = AcMainhead::all();
         $ac_category = AcCategory::all();
         return view('admin.chartofacc.chart_of_account', [
+
             'main_head' => $main_head,
             'ac_category' => $ac_category,
             'ac_cartofacc' => $ac_cartofacc,
             'search' => $search,
-            'grouped'=>$grouped,
+            'grouped' => $grouped,
         ]);
     }
 
@@ -255,9 +256,9 @@ class AccuntingController extends Controller
 
         try {
             $main = AcTransactionMain::create([
-                'selfid' => $request->input('selfid'),
                 'dateoftransaction' => $request->input('dateoftransaction'),
                 'voucherno' => $request->input('voucherno'),
+                'manualvoucherno' => $request->input('manualvoucherno'),
                 'trcode' => 3,
                 'vouchertype' => 3,
                 'particulars' => $request->input('particulars'),
@@ -265,7 +266,8 @@ class AccuntingController extends Controller
             ]);
             // Ensure you get the auto-generated voucherno from DB
             $main->refresh();
-
+            $main->selfid = $main->id;
+            $main->save();
             foreach ($request->input('entries') as $entry) {
                 // Check if this entry is not empty (example criteria)
                 if (
@@ -291,6 +293,71 @@ class AccuntingController extends Controller
         }
     }
 
+    function general_journal_list()
+    {
+        $maintransition = AcTransactionMain::all();
+        return view('admin.journal.general_journal_list', [
+            'maintransition' => $maintransition,
+        ]);
+    }
+
+    function show($id)
+    {
+        $entry = AcTransactionMain::with('details')->findOrFail($id);
+        $ac_cartofacc = AcCartofacc::all();
+        return view('admin.journal.edit_genaral_journal', [
+            'entry' => $entry,
+            'ac_cartofacc' => $ac_cartofacc,
+        ]);
+    }
+
+    function update(Request $request, $id)
+    {
+        // Validate the input
+        $validated = $request->validate([
+            'dateoftransaction' => 'required|date',
+            'manualvoucherno' => 'nullable|string|max:100',
+            'particulars' => 'required|string|max:255',
+            'entries' => 'required|array|min:1',
+            'entries.*.accountscode' => 'required|string',
+            'entries.*.naration' => 'nullable|string',
+            'entries.*.debit' => 'required|numeric|min:0',
+            'entries.*.credit' => 'required|numeric|min:0',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // Update main journal entry
+            $main = AcTransactionMain::findOrFail($id);
+            $main->dateoftransaction = $request->dateoftransaction;
+            $main->manualvoucherno = $request->manualvoucherno;
+            $main->particulars = $request->particulars;
+            $main->save();
+
+            // Delete old details
+            $main->details()->delete();
+
+            // Insert updated detail entries
+            foreach ($request->entries as $entry) {
+                $main->details()->create([
+                    'accountscode' => $entry['accountscode'],
+                    'naration' => $entry['naration'] ?? '',
+                    'debit' => $entry['debit'],
+                    'credit' => $entry['credit'],
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()->route('general_journal')->with('success', 'Journal entry updated successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Error updating journal entry: ' . $e->getMessage());
+        }
+    }
+
+    //Adjustment Jurnal
     function adjustment_journal()
     {
         $ac_cartofacc = AcCartofacc::all();
@@ -407,5 +474,53 @@ class AccuntingController extends Controller
         return view('admin.CreditNote.credit_note', [
             'supplier_info' => $supplier_info,
         ]);
+    }
+
+    public function credit_note_store(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            $main = AcTransactionMain::create([
+                'selfid' => $request->input('selfid'),
+                'dateoftransaction' => $request->input('dateoftransaction'),
+                'trcode' => 3,
+                'vouchertype' => 3,
+                'particulars' => $request->input('particulars'),
+                'partytype' => $request->input('partytype'),
+                'partycode' => $request->input('partycode'),
+                'created_at' => now(),
+            ]);
+
+            $main->refresh();
+
+            $amount = abs(floatval($request->input('amount')));
+            $accountscode = $request->input('accountscode');
+            $narration = $request->input('naration') ?? '';
+
+            // Debit row
+            AcTransactionDetail::create([
+                'voucherno' => $main->voucherno,
+                'accountscode' => $accountscode,
+                'naration' => $narration,
+                'debit' => $amount,
+                'credit' => 0,
+            ]);
+
+            // Credit row
+            AcTransactionDetail::create([
+                'voucherno' => $main->voucherno,
+                'accountscode' => $accountscode,
+                'naration' => $narration,
+                'debit' => 0,
+                'credit' => $amount,
+            ]);
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Credit Note Entry saved successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Error saving data: ' . $e->getMessage());
+        }
     }
 }
