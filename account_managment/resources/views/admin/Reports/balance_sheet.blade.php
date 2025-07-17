@@ -35,7 +35,78 @@
 
         <div id="reportContainer" class="report-container">
 
-        <h2 style="text-align:center;">Balance Sheet</h2>
+
+    <h2 style="text-align:center;">Balance Sheet</h2>
+    <p style="text-align:center;">As of {{ $report_date }}</p>
+
+    <table>
+        <tr>
+            <td style="width: 50%; vertical-align: top;">
+                <table>
+                    <tr><td class="section-title" colspan="2">Assets</td></tr>
+
+                    @foreach (($grouped['Assets'] ?? collect())->groupBy('controlname') as $control => $items)
+                        <tr><td class="group-title" colspan="2">{{ $control }}</td></tr>
+                        @foreach ($items as $item)
+                            <tr>
+                                <td>{{ $item['mainheadname'] }}</td>
+                                <td class="amount">{{ format_money($item['closing_bal']) }}</td>
+                            </tr>
+                        @endforeach
+                    @endforeach
+                    <tr class="border-top">
+                        <td><strong>Total Assets</strong></td>
+                        <td class="amount"><strong>{{ format_money($totals['Assets']['closing'] ?? 0) }}</strong></td>
+                    </tr>
+                </table>
+            </td>
+
+            <td style="width: 50%; vertical-align: top;">
+                <table>
+                    <tr><td class="section-title" colspan="2">Liabilities</td></tr>
+                    @foreach (($grouped['Liabilities'] ?? collect())->groupBy('controlname') as $control => $items)
+                        <tr><td class="group-title" colspan="2">{{ $control }}</td></tr>
+                        @foreach ($items as $item)
+                            <tr>
+                                <td>{{ $item['mainheadname'] }}</td>
+                                <td class="amount">{{ format_money($item['closing_bal']) }}</td>
+                            </tr>
+                        @endforeach
+                    @endforeach
+                    <tr class="border-top">
+                        <td><strong>Total Liabilities</strong></td>
+                        <td class="amount"><strong>{{ format_money($totals['Liabilities']['closing'] ?? 0) }}</strong></td>
+                    </tr>
+
+                    <tr><td class="section-title" colspan="2">Equity</td></tr>
+                    @foreach (($grouped['Equity'] ?? collect())->groupBy('controlname') as $control => $items)
+                        <tr><td class="group-title" colspan="2">{{ $control }}</td></tr>
+                        @foreach ($items as $item)
+                            <tr>
+                                <td>{{ $item['mainheadname'] }}</td>
+                                <td class="amount">{{ format_money($item['closing_bal']) }}</td>
+                            </tr>
+                        @endforeach
+                    @endforeach
+                    <tr class="border-top">
+                        <td><strong>Total Equity</strong></td>
+                        <td class="amount"><strong>{{ format_money($totals['Equity']['closing'] ?? 0) }}</strong></td>
+                    </tr>
+
+                    <tr class="border-double">
+                        <td><strong>Total Liabilities + Equity</strong></td>
+                        <td class="amount"><strong>
+                            {{ format_money(($totals['Liabilities']['closing'] ?? 0) + ($totals['Equity']['closing'] ?? 0)) }}
+                        </strong></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+
+
+        {{-- <h2 style="text-align:center;">Balance Sheet</h2>
             <p style="text-align:center;">{{ $report_date ?? now()->toDateString() }}</p>
 
             <table>
@@ -78,7 +149,7 @@
                             <tr><td class="group-title" colspan="2">Equity</td></tr>
                             <tr>
                                 <td>Net Loss</td>
-                                <td class="amount">{{ number_format($equity['net_loss'], 2) }}</td>
+                                <td class="amount">{{ format_money($equity['net_loss'], 2) }}</td>
                             </tr>
                             <tr class="border-top">
                                 <td><strong>Total Equity</strong></td>
@@ -91,7 +162,7 @@
                         </table>
                     </td>
                 </tr>
-            </table>
+            </table> --}}
 
 
         </div>

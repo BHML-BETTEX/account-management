@@ -91,15 +91,14 @@
                     @php
                         $balance = 0;
                     @endphp
-
                     @foreach ($entries as $entry)
                         @php
                             $balance += $entry['debit'] - $entry['credit'];
                         @endphp
                         <tr>
-                            <td>{{ $entry['date'] }}</td>
-                            <td>{{ $entry['voucher_no'] }}</td>
-                            <td>{{ $entry['description'] }}</td>
+                            <td>{{ $entry['dateoftransaction'] }}</td>
+                            <td>{{ $entry['voucherno'] }}</td>
+                            <td>{{ $entry['particulars'] }}</td>
                             <td class="right">{{ number_format($entry['debit'], 2) }}</td>
                             <td class="right">{{ number_format($entry['credit'], 2) }}</td>
                             <td class="right">{{ number_format($balance, 2) }}</td>
@@ -108,8 +107,8 @@
 
                     <tr class="subhead">
                         <td colspan="3" class="right">Sub Total:</td>
-                        <td class="right">{{ number_format($entries->sum('debit'), 2) }}</td>
-                        <td class="right">{{ number_format($entries->sum('credit'), 2) }}</td>
+                        <td class="right">{{ number_format(collect($entries)->sum('debit'), 2) }}</td>
+                        <td class="right">{{ number_format(collect($entries)->sum('credit'), 2) }}</td>
                         <td class="right">{{ number_format($balance, 2) }}</td>
                     </tr>
                 </tbody>

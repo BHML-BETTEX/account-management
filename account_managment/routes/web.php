@@ -123,8 +123,9 @@ Route::get('/generalladger/reports', [ReportsController::class, 'generalladger']
 Route::get('/cashbook/reports', [ReportsController::class, 'cashbook'])->name('cashbook');
 Route::get('/bankbook/reports', [ReportsController::class, 'bankbook'])->name('bankbook');
 Route::get('/trialbalance/reports', [ReportsController::class, 'trialbalance'])->name('trialbalance');
-Route::get('/profit&loss/reports', [ReportsController::class, 'profit_loss'])->name('profit_loss');
+Route::get('/profitloss/reports', [ReportsController::class, 'profit_loss'])->name('profit_loss');
 Route::get('/balance_sheet/reports', [ReportsController::class, 'balance_sheet'])->name('balance_sheet');
+Route::get('/balance-sheet-pdf', [ReportsController::class, 'downloadPdf'])->name('balance_sheet_pdf');
 Route::get('/voucher_list/reports', [ReportsController::class, 'voucher_list'])->name('voucher_list');
 
 

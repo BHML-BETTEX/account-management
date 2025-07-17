@@ -5,13 +5,21 @@ namespace App\Http\Controllers;
 use App\Models\AcCartofacc;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Collection;
 
 class ReportsController extends Controller
 {
     function generalladger()
     {
         $chart_of_acc = AcCartofacc::all();
-        $entries = collect([
+        //$entries =  DB::table('vw_chartofaccounts')->get(); 
+        $objects= DB::select("select * from vw_ledgerfinal");
+
+        $entries = array_map(function ($item) {
+        return (array) $item;
+        }, $objects);
+        $entries1 = collect([
         ['date' => '01-01-2023', 'voucher_no' => '3202300001', 'description' => 'Opening Cash', 'debit' => 13298, 'credit' => 0],
         ['date' => '01-01-2023', 'voucher_no' => '3202300001', 'description' => 'Loan From BHML', 'debit' => 200000, 'credit' => 0],
         ['date' => '02-01-2023', 'voucher_no' => '1202300001', 'description' => 'Daily Bazar Expense', 'debit' => 0, 'credit' => 5390],
@@ -62,38 +70,62 @@ class ReportsController extends Controller
 
     function balance_sheet()
     {
-        // Example data from database or calculations
-            $assets = [
-                'cash_on_hand' => 94193,
-                'cash_at_bank' => 2950,
-                'accounts_receivables' => 20000,
+
+        $date = '2025-07-17';
+
+
+
+        $pdo = \Illuminate\Support\Facades\DB::getPdo();
+
+        // Call the procedure with a date parameter
+    $stmt = $pdo->prepare("CALL sp_balancesheet(?)");
+    $stmt->execute([$date]);
+
+    // 1st result set (Trial Balance)
+    $trialBalance = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+    // 2nd result set (Trial Balance)
+    $stmt->nextRowset();
+    $trialBalance1 = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+    // move to 3rd result set (Balance Sheet)
+    $stmt->nextRowset();
+    $incomeStatement = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+    // move to 4th result set (Balance Sheet)
+    $stmt->nextRowset();
+    $balanceSheet = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    $results=$balanceSheet;
+
+        // Group results by typename (Assets, Liabilities, Equity)
+        $grouped = collect($results)->groupBy('typename');
+        // Calculate totals
+        $totals = $grouped->map(function ($items) {
+            return [
+                'opening' => $items->sum('opening_bal'),
+                'bal'     => $items->sum('bal'),
+                'closing' => $items->sum('closing_bal'),
             ];
+        });
 
-            $liabilities = [
-                'loans' => 213298,
-            ];
-
-            $equity = [
-                'net_loss' => 102055,
-            ];
-
-            $total_assets = array_sum($assets);
-            $total_liabilities = array_sum($liabilities);
-            $total_equity = array_sum($equity);
-
-            return view('admin.Reports.balance_sheet', compact(
-                'assets',
-                'liabilities',
-                'equity',
-                'total_assets',
-                'total_liabilities',
-                'total_equity'
-            ));
+        return view('admin.Reports.balance_sheet', [
+            'grouped' => $grouped,
+            'totals' => $totals,
+            'report_date' => $date,
+        ]);
 
     }
 
+    public function downloadPdf()
+    {
+        $data = ['title' => 'Balance Sheet'];
+        $pdf = Pdf::loadView('admin.Reports.balance_sheet', $data);
+        return $pdf->download('balance_sheet.pdf');
+    }
+
+
     public function voucher_list(Request $request)
-{
+    {
     $from = $request->input('from_date');
     $to = $request->input('to_date');
 
