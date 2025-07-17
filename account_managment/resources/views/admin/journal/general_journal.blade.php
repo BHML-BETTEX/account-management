@@ -80,6 +80,15 @@
                                     <label for="particulars">Particulars</label>
                                     <input type="text" name="particulars" class="form-control" required>
                                 </div>
+                                <div class="form-group">
+                                    <label for="particulars" title="" >Voucher Type</label>
+                                    <select name="trcode" class="form-control">
+                                        <option value="1">Debit Voucher (Paying out cash or bank.)</option>
+                                        <option value="2">Credit Voucher (Receiving money into cash or bank.)</option>
+                                        <option value="3">Adjustment Voucher (Not involving cash or bank directly)</option>
+                                    </select>                                
+                                </div>
+
                             </div>
 
                             <!-- Journal Entries Table -->

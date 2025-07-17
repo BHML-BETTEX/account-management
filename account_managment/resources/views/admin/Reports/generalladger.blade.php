@@ -54,32 +54,80 @@
             </div>
         </div>
 
-        <div id="reportContainer" class="report-container mt-4"></div>
+        <div id="reportContainer" class="report-container mt-4">
+
+        <table class="header-table">
+                <tr>
+                    <td colspan="3">General Ledger</td>
+                    <td class="right" colspan="2">Page 1 of 1</td>
+                </tr>
+                <tr>
+                    <td colspan="3">lblReportPeriod</td>
+                    <td class="right" colspan="2">Date of Printing: {{ now()->format('d/m/Y') }}</td>
+                </tr>
+            </table>
+
+            <br>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Voucher No.</th>
+                        <th>Transaction Description / Particulars</th>
+                        <th class="right">Debit</th>
+                        <th class="right">Credit</th>
+                        <th class="right">Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="subhead">
+                        <td colspan="6">2001 &nbsp; Cash on Hand</td>
+                    </tr>
+                    <tr class="subhead">
+                        <td colspan="6">20011001 &nbsp; Cash on Hand</td>
+                    </tr>
+
+                    @php
+                        $balance = 0;
+                    @endphp
+
+                    @foreach ($entries as $entry)
+                        @php
+                            $balance += $entry['debit'] - $entry['credit'];
+                        @endphp
+                        <tr>
+                            <td>{{ $entry['date'] }}</td>
+                            <td>{{ $entry['voucher_no'] }}</td>
+                            <td>{{ $entry['description'] }}</td>
+                            <td class="right">{{ number_format($entry['debit'], 2) }}</td>
+                            <td class="right">{{ number_format($entry['credit'], 2) }}</td>
+                            <td class="right">{{ number_format($balance, 2) }}</td>
+                        </tr>
+                    @endforeach
+
+                    <tr class="subhead">
+                        <td colspan="3" class="right">Sub Total:</td>
+                        <td class="right">{{ number_format($entries->sum('debit'), 2) }}</td>
+                        <td class="right">{{ number_format($entries->sum('credit'), 2) }}</td>
+                        <td class="right">{{ number_format($balance, 2) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
     </div>
 </div>
 
-<style>
-    table.report-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 30px;
-        font-size: 14px;
-    }
-
-    table.report-table th,
-    table.report-table td {
-        border: 1px solid #ccc;
-        padding: 8px;
-    }
-
-    .text-right {
-        text-align: right;
-    }
-
-    .text-center {
-        text-align: center;
-    }
-</style>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 12px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #000; padding: 5px; text-align: left; }
+        .no-border { border: none; }
+        .header-table td { font-weight: bold; }
+        .subhead { font-weight: bold; background-color: #f0f0f0; }
+        .right { text-align: right; }
+    </style>
 
 <script>
     document.getElementById('ledgerForm').addEventListener('submit', function(e) {

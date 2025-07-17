@@ -11,9 +11,18 @@ class ReportsController extends Controller
     function generalladger()
     {
         $chart_of_acc = AcCartofacc::all();
-        return view('admin.Reports.generalladger', [
+        $entries = collect([
+        ['date' => '01-01-2023', 'voucher_no' => '3202300001', 'description' => 'Opening Cash', 'debit' => 13298, 'credit' => 0],
+        ['date' => '01-01-2023', 'voucher_no' => '3202300001', 'description' => 'Loan From BHML', 'debit' => 200000, 'credit' => 0],
+        ['date' => '02-01-2023', 'voucher_no' => '1202300001', 'description' => 'Daily Bazar Expense', 'debit' => 0, 'credit' => 5390],
+        ['date' => '02-01-2023', 'voucher_no' => '1202300002', 'description' => 'Courier Bill', 'debit' => 0, 'credit' => 5500],
+        ['date' => '02-01-2023', 'voucher_no' => '1202300003', 'description' => 'Material Purchase', 'debit' => 0, 'credit' => 55300],
+        ['date' => '02-01-2023', 'voucher_no' => '1202300004', 'description' => 'Sample Purchase', 'debit' => 0, 'credit' => 65],
+        // ... Add all records as needed
+    ]);
+        return view('admin.reports.generalladger', [
             //dd($chart_of_acc),
-            'chart_of_acc' => $chart_of_acc,
+            'chart_of_acc' => $chart_of_acc,'entries' => $entries
         ]);
     }
 
@@ -53,7 +62,34 @@ class ReportsController extends Controller
 
     function balance_sheet()
     {
-        return view('admin.Reports.balance_sheet');
+        // Example data from database or calculations
+            $assets = [
+                'cash_on_hand' => 94193,
+                'cash_at_bank' => 2950,
+                'accounts_receivables' => 20000,
+            ];
+
+            $liabilities = [
+                'loans' => 213298,
+            ];
+
+            $equity = [
+                'net_loss' => 102055,
+            ];
+
+            $total_assets = array_sum($assets);
+            $total_liabilities = array_sum($liabilities);
+            $total_equity = array_sum($equity);
+
+            return view('admin.Reports.balance_sheet', compact(
+                'assets',
+                'liabilities',
+                'equity',
+                'total_assets',
+                'total_liabilities',
+                'total_equity'
+            ));
+
     }
 
     public function voucher_list(Request $request)

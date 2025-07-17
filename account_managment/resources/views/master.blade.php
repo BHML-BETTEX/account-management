@@ -9,7 +9,6 @@
   <title>Dashboard</title>
 
   <link rel="shortcut icon" id="favicon" href="https://democrm.i2technologies.net/uploads/company/favicon.jpg">
-  <link rel="apple-touch-icon”" id="favicon-apple-touch-icon" href="https://democrm.i2technologies.net/uploads/company/favicon.jpg">
   <link rel="stylesheet" type="text/css" id="reset-css" href="{{ asset('assets/css/custom.reset.min.css') }}">
   <link rel="stylesheet" type="text/css" id="roboto-css" href="{{ asset('assets/plugins/roboto/roboto.css') }}">
   <link rel="stylesheet" type="text/css" id="vendor-css" href="{{ asset('assets/builds/vendor-admin.css') }}">

@@ -165,7 +165,7 @@ class AccuntingController extends Controller
         if ($search != '') {
             $ac_cartofacc = AcCartofacc::where('accountsheadname', 'LIKE', "%$search%")->paginate(13);
         } else {
-            $ac_cartofacc = AcCartofacc::paginate(30);
+            $ac_cartofacc = AcCartofacc::paginate(100);
         }
         $data = DB::table('vw_chartofaccounts')->get();
 
@@ -257,9 +257,8 @@ class AccuntingController extends Controller
         try {
             $main = AcTransactionMain::create([
                 'dateoftransaction' => $request->input('dateoftransaction'),
-                'voucherno' => $request->input('voucherno'),
                 'manualvoucherno' => $request->input('manualvoucherno'),
-                'trcode' => 3,
+                'trcode' => $request->input('trcode'),
                 'vouchertype' => 3,
                 'particulars' => $request->input('particulars'),
                 'created_at' => Carbon::now(),
@@ -276,6 +275,7 @@ class AccuntingController extends Controller
                     ($entry['debit'] != 0 || $entry['credit'] != 0)
                 ) {
                     AcTransactionDetail::create([
+                        'trandetailid' => $main->id, // Assuming this is the correct foreign key
                         'voucherno' => $main->voucherno,
                         'accountscode' => $entry['accountscode'],
                         'naration' => $entry['naration'] ?? '',

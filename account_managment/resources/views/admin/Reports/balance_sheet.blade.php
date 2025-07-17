@@ -33,39 +33,103 @@
             </div>
         </div>
 
-        <div id="reportContainer" class="report-container"></div>
+        <div id="reportContainer" class="report-container">
+
+        <h2 style="text-align:center;">Balance Sheet</h2>
+            <p style="text-align:center;">{{ $report_date ?? now()->toDateString() }}</p>
+
+            <table>
+                <tr>
+                    <td style="width: 50%; vertical-align: top;">
+                        <table>
+                            <tr><td class="section-title" colspan="2">Assets</td></tr>
+                            <tr><td class="group-title" colspan="2">Current Assets</td></tr>
+                            <tr>
+                                <td>Cash on Hand</td>
+                                <td class="amount">{{ number_format($assets['cash_on_hand'], 2) }}</td>
+                            </tr>
+                            <tr>
+                                <td>Cash at Bank</td>
+                                <td class="amount">{{ number_format($assets['cash_at_bank'], 2) }}</td>
+                            </tr>
+                            <tr>
+                                <td>Accounts Receivables</td>
+                                <td class="amount">{{ number_format($assets['accounts_receivables'], 2) }}</td>
+                            </tr>
+                            <tr class="border-top">
+                                <td><strong>Total Assets</strong></td>
+                                <td class="amount"><strong>{{ number_format($total_assets, 2) }}</strong></td>
+                            </tr>
+                        </table>
+                    </td>
+
+                    <td style="width: 50%; vertical-align: top;">
+                        <table>
+                            <tr><td class="section-title" colspan="2">Liabilities</td></tr>
+                            <tr><td class="group-title" colspan="2">Current Liabilities</td></tr>
+                            <tr>
+                                <td>Loans</td>
+                                <td class="amount">{{ number_format($liabilities['loans'], 2) }}</td>
+                            </tr>
+                            <tr class="border-top">
+                                <td><strong>Total Liabilities</strong></td>
+                                <td class="amount"><strong>{{ number_format($total_liabilities, 2) }}</strong></td>
+                            </tr>
+                            <tr><td class="group-title" colspan="2">Equity</td></tr>
+                            <tr>
+                                <td>Net Loss</td>
+                                <td class="amount">{{ number_format($equity['net_loss'], 2) }}</td>
+                            </tr>
+                            <tr class="border-top">
+                                <td><strong>Total Equity</strong></td>
+                                <td class="amount"><strong>{{ number_format($total_equity, 2) }}</strong></td>
+                            </tr>
+                            <tr class="border-double">
+                                <td><strong>Total Liabilities + Equity</strong></td>
+                                <td class="amount"><strong>{{ number_format($total_liabilities + $total_equity, 2) }}</strong></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+
+
+        </div>
     </div>
 </div>
 
-<style>
-    table.report-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 30px;
-        font-size: 14px;
-    }
-
-    table.report-table th, table.report-table td {
-        border: 1px solid #ccc;
-        padding: 8px;
-    }
-
-    table.report-table thead {
-        background-color: #e5f4f9;
-    }
-
-    .text-right {
-        text-align: right;
-    }
-
-    .text-center {
-        text-align: center;
-    }
-
-    h3, h4 {
-        margin: 0;
-    }
-</style>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .section-title {
+            background-color: #ddd;
+            font-weight: bold;
+            padding: 6px;
+        }
+        .group-title {
+            font-weight: bold;
+            padding: 6px;
+        }
+        td, th {
+            padding: 6px;
+            vertical-align: top;
+        }
+        .amount {
+            text-align: right;
+        }
+        .border-top {
+            border-top: 1px solid #000;
+        }
+        .border-double {
+            border-top: 3px double #000;
+        }
+    </style>
 
 <script>
     document.getElementById('balanceForm').addEventListener('submit', function(e) {
