@@ -14,6 +14,21 @@
   <link rel="stylesheet" type="text/css" id="vendor-css" href="{{ asset('assets/builds/vendor-admin.css') }}">
   <link rel="stylesheet" type="text/css" id="app-css" href="{{ asset('assets/css/style.min.css') }}">
   <link rel="stylesheet" type="text/css" id="full-calendar-css" href="{{ asset('assets/plugins/fullcalendar/fullcalendar.min.css') }}">
+
+  <!-- Bootstrap CSS -->
+  {{-- Bootstrap CSS (Make sure this matches the version your master uses, e.g., Bootstrap 3) --}}
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnBUiHhuIKmkAGGtmCXalE5gbchJPcAsYtEKjIfLexSwsPtgOOGvXFOfL7ey" crossorigin="anonymous">
+
+  {{-- Font Awesome for icons (if your master doesn't already include it) --}}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7QJUGbAq8mgtE62LML0F7eQeE5JzQpGAJzSbgWwB/WqFV/zJtD5+fF7QJjCqF4q8w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  {{-- DataTables Core CSS --}}
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.25/datatables.min.css" />
+  {{-- DataTables Buttons Extension CSS --}}
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css" />
+
+  <!-- Scripts -->
+
   <script>
     var site_url = "https://democrm.i2technologies.net/";
     var admin_url = "https://democrm.i2technologies.net/admin/";
