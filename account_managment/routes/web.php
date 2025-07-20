@@ -98,6 +98,8 @@ Route::post('/adjustment_journal/store', [AccuntingController::class, 'adjustmen
 
 //unposted Journal
 Route::get('/unposted_journal', [AccuntingController::class, 'unposted_journal'])->name('unposted_journal');
+Route::post('/update-posted-status', [AccuntingController::class, 'updatePostedStatus'])->name('update.posted.status');
+
 
 //others payment Entry
 Route::get('/others_payment', [AccuntingController::class, 'others_payment'])->name('others_payment');

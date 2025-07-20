@@ -117,23 +117,23 @@
                     <table id="mainHeadTable" class="table table-accounts table-striped table-bordered" style="width:100%">
                         <thead style="background-color: #e5f4f9;">
                             <tr>
-                                <th style="font-size: 15px;">#</th>
-                                <th style="font-size: 15px;">Main Head</th>
-                                <th style="font-size: 15px;">Account Code</th>
-                                <th style="font-size: 15px;">Account Head Name</th>
-                                <th style="font-size: 15px;">Category</th>
-                                <th style="font-size: 15px;">Current Balance</th>
-                                <th style="font-size: 15px;">Action</th>
+                                <th>#</th>
+                                <th>Main Head</th>
+                                <th>Account Code</th>
+                                <th>Account Head Name</th>
+                                <th>Category</th>
+                                <th>Current Balance</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($ac_cartofacc as $key => $ac_cartofaccs)
                             <tr>
-                                <td style="font-size: 14px;">{{ $key + 1 }}</td>
-                                <td style="font-size: 14px;">{{ $ac_cartofaccs->mainheadcode }}</td>
-                                <td style="font-size: 14px;">{{ $ac_cartofaccs->accountscode }}</td>
-                                <td style="font-size: 14px;">{{ $ac_cartofaccs->accountsheadname }}</td>
-                                <td style="font-size: 14px;">
+                                <td>{{ $key + 1 }}</td>
+                                <td>{{ $ac_cartofaccs->mainheadcode }}</td>
+                                <td>{{ $ac_cartofaccs->accountscode }}</td>
+                                <td>{{ $ac_cartofaccs->accountsheadname }}</td>
+                                <td>
                                     @php $cat = strtoupper($ac_cartofaccs->category); @endphp
                                     @if($cat === 'C')
                                     Cash
@@ -143,8 +143,8 @@
                                     GL
                                     @endif
                                 </td>
-                                <td style="font-size: 14px;">{{$ac_cartofaccs->balance}}</td>
-                                <td style="font-size: 14px;">
+                                <td>{{$ac_cartofaccs->balance}}</td>
+                                <td>
                                     <button
                                         type="button"
                                         class="label label-success edit-btn"

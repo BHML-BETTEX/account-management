@@ -410,9 +410,24 @@ class AccuntingController extends Controller
 
 
     function unposted_journal()
-    {
-        return view('admin.unpostedjournal.unposted_journal');
+    { 
+        $data = DB::table('ac_transactionmain')->where('posted', 0)->get();
+        return view('admin.unpostedjournal.unposted_journal', [
+            'data' => $data,
+        ]);
     }
+
+    function updatePostedStatus(Request $request)
+{
+    $id = $request->input('id');
+    $posted = $request->input('posted');
+
+    DB::table('ac_transactionmain')->where('id', $id)->update([
+        'posted' => $posted,
+    ]);
+
+    return response()->json(['success' => true]);
+}
 
     function others_payment()
     {
