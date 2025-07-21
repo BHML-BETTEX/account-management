@@ -44,34 +44,60 @@ class ReportsController extends Controller
         return view('admin.Reports.bankbook');
     }
 
-    function trialbalance()
+    function trialbalance(Request $request)
     {
-        return view('admin.Reports.trialbalance');
+        //$date = $request->input('date', now()->toDateString());
+        $date = '2025-07-21';
+
+        $results = DB::select("CALL sp_print_trialbalance(?)", [$date]);
+
+        // Group by main head
+        $grouped = collect($results)->groupBy('op_mainheadcode');
+
+        return view('admin.reports.trialbalance', [
+            'grouped' => $grouped,
+            'report_date' => $date,
+        ]);
     }
 
     public function profit_loss(Request $request)
     {
-        $fromDate = $request->input('from_date'); // from form input
+        //$date = $request->input('date', now()->toDateString());
+        $date = '2025-07-21';
 
-        if (!$fromDate) {
-            // handle missing date (redirect or default date)
-            $fromDate = date('Y-m-d'); // for example, today
-        }
+        $pdo = \Illuminate\Support\Facades\DB::getPdo();
 
-        // Call stored procedure, pass date param
-        $result = DB::select("CALL sp_incomestatement(?)", [$fromDate]);
+        // Call the procedure with a date parameter
+        $stmt = $pdo->prepare("CALL sp_incomestatement(?)");
+        $stmt->execute([$date]);
 
-        // Pass the result set to view
-        return view('admin.Reports.profit_loss', [
-            'result' => $result,
-            'fromDate' => $fromDate,
+        // 1st result set (Trial Balance)
+        $trialBalance = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        // 2nd result set (Trial Balance)
+        $stmt->nextRowset();
+        $incomeStatement = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $results=$incomeStatement;
+
+
+        // Group data by mainheadcode
+        $grouped = collect($results)->groupBy('op_ctrlcode');
+        // Calculate total amount (Assuming all are expenses for now)
+        $netLoss = collect($results)->sum('op_bal');
+
+        return view('admin.reports.profit_loss', [
+            'grouped' => $grouped,
+            'report_date' => $date,
+            'net_loss' => $netLoss,
         ]);
+
+
     }
 
     function balance_sheet()
     {
 
-        $date = '2025-07-17';
+        $date = '2025-07-21';
 
 
 

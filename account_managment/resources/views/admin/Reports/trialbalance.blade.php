@@ -32,38 +32,94 @@
             </div>
         </div>
 
-        <div id="reportContainer" class="report-container"></div>
+        <div id="reportContainer" class="report-container">
+
+            <h2 style="text-align:center;">Trial Balance</h2>
+            <p style="text-align:center;">As of {{ $report_date }}</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Accounts Description</th>
+                        <th class="text-right">Debit Amount</th>
+                        <th class="text-right">Credit Amount</th>
+                        <th class="text-right">Balance Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php
+                        $grand_debit = 0;
+                        $grand_credit = 0;
+                        $grand_balance = 0;
+                    @endphp
+
+                    @foreach ($grouped as $mainheadcode => $items)
+                        @php
+                            $main = $items->first();
+                            $sub_total_debit = 0;
+                            $sub_total_credit = 0;
+                            $sub_total_balance = 0;
+                        @endphp
+
+                        <tr class="mainhead">
+                            <td colspan="4">{{ $main->op_mainheadcode }} {{ $main->op_mainheadname }}</td>
+                        </tr>
+
+                        @foreach ($items as $item)
+                            @php
+                                //$balance = ($item->op_debit ?? 0) - ($item->op_credit ?? 0);
+                                $balance = $item->op_balance;
+                                $sub_total_debit += $item->op_debit ?? 0;
+                                $sub_total_credit += $item->op_credit ?? 0;
+                                $sub_total_balance += $balance;
+                            @endphp
+                            <tr>
+                                <td>{{ $item->op_accountscode }} {{ $item->op_accountsheadname }}</td>
+                                <td class="text-right">{{ format_money($item->op_debit ?? 0, 2) }}</td>
+                                <td class="text-right">{{ format_money($item->op_credit ?? 0, 2) }}</td>
+                                <td class="text-right">{{ format_money($item->op_balance, 2) }}</td>
+                            </tr>
+                        @endforeach
+
+                        <tr class="bold">
+                            <td>Main Head Total:</td>
+                            <td class="text-right">{{ format_money($sub_total_debit, 2) }}</td>
+                            <td class="text-right">{{ format_money($sub_total_credit, 2) }}</td>
+                            <td class="text-right">{{ format_money($sub_total_balance, 2) }}</td>
+                        </tr>
+
+                        @php
+                            $grand_debit += $sub_total_debit;
+                            $grand_credit += $sub_total_credit;
+                            $grand_balance += $sub_total_balance;
+                        @endphp
+                    @endforeach
+
+                    <tr class="grand-total">
+                        <td>Grand Total:</td>
+                        <td class="text-right">{{ format_money($grand_debit, 2) }}</td>
+                        <td class="text-right">{{ format_money($grand_credit, 2) }}</td>
+                        <td class="text-right">{{ format_money($grand_balance, 2) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+
+        </div>
     </div>
 </div>
 
 <style>
-    table.report-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 30px;
-        font-size: 14px;
-    }
+        body { font-family: DejaVu Sans, sans-serif; font-size: 13px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 5px; text-align: left; border-bottom: 1px solid #ccc; }
+        th { background-color: #f4f4f4; }
+        .text-right { text-align: right; }
+        .bold { font-weight: bold; }
+        .mainhead { background-color: #e9ecef; font-weight: bold; }
+        .grand-total { border-top: 2px solid #000; font-weight: bold; }
 
-    table.report-table th, table.report-table td {
-        border: 1px solid #ccc;
-        padding: 8px;
-    }
-
-    table.report-table thead {
-        background-color: #e5f4f9;
-    }
-
-    .text-right {
-        text-align: right;
-    }
-
-    .text-center {
-        text-align: center;
-    }
-
-    h3, h4 {
-        margin: 0;
-    }
 </style>
 
 <script>
