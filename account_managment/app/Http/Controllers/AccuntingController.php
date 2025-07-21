@@ -16,7 +16,7 @@ use Carbon\Carbon;
 
 class AccuntingController extends Controller
 {
-
+    //===================Account Type==================
     function acc_type()
     {
         $account_types = ac_type::all();
@@ -58,6 +58,7 @@ class AccuntingController extends Controller
         return back();
     }
 
+    //===================Account Controll==================
     function acc_control()
     {
         $account_type = ac_type::all();
@@ -83,6 +84,7 @@ class AccuntingController extends Controller
         return back();
     }
 
+    //===================Account Mainhead==================
     function main_head()
     {
         $account_control = ac_control::all();
@@ -109,7 +111,7 @@ class AccuntingController extends Controller
         return back();
     }
 
-    //account category
+    //===================Account Category==================
     function acc_category()
     {
         $account_category = AcCategory::all();
@@ -157,7 +159,7 @@ class AccuntingController extends Controller
         return back();
     }
 
-    //chart of account
+    //===================Chart Of Account==================
     function chart_of_account(Request $request)
     {
         $search = $request->input('search', '');
@@ -233,7 +235,7 @@ class AccuntingController extends Controller
     }
 
 
-    //general_journal
+    //===================General Journal==================
     function general_journal()
     {
         $ac_cartofacc = AcCartofacc::all();
@@ -296,8 +298,10 @@ class AccuntingController extends Controller
     function general_journal_list()
     {
         $maintransition = AcTransactionMain::all();
+        $detailtransition = AcTransactionDetail::all();
         return view('admin.journal.general_journal_list', [
             'maintransition' => $maintransition,
+            'detailtransition'=> $detailtransition,
         ]);
     }
 
@@ -350,14 +354,16 @@ class AccuntingController extends Controller
 
             DB::commit();
 
-            return redirect()->route('general_journal')->with('success', 'Journal entry updated successfully.');
+            return redirect()
+                ->route('unposted_journal')
+                ->with('success', 'Journal entry updated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Error updating journal entry: ' . $e->getMessage());
         }
     }
 
-    //Adjustment Jurnal
+    //===================Adjustment Journal==================
     function adjustment_journal()
     {
         $ac_cartofacc = AcCartofacc::all();
@@ -408,27 +414,39 @@ class AccuntingController extends Controller
         }
     }
 
-
+    //===================Unposted Journal==================
     function unposted_journal()
-    { 
+    {
         $data = DB::table('ac_transactionmain')->where('posted', 0)->get();
         return view('admin.unpostedjournal.unposted_journal', [
             'data' => $data,
         ]);
     }
 
-    function updatePostedStatus(Request $request)
-{
-    $id = $request->input('id');
-    $posted = $request->input('posted');
+    public function updatePostedStatus(Request $request)
+    {
+        try {
+            $request->validate([
+                'id' => 'required|integer|exists:ac_transactionmain,id',
+                'posted' => 'required|boolean',
+            ]);
 
-    DB::table('ac_transactionmain')->where('id', $id)->update([
-        'posted' => $posted,
-    ]);
+            $updated = DB::table('ac_transactionmain')->where('id', $request->id)->update([
+                'posted' => $request->posted,
+            ]);
 
-    return response()->json(['success' => true]);
-}
+            if ($updated) {
+                return response()->json(['success' => true]);
+            } else {
+                // Could mean record already had the same posted value
+                return response()->json(['success' => false, 'message' => 'No rows updated']);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
 
+    //===================Others Payment==================
     function others_payment()
     {
         $acoounts_head = AcMainhead::all();

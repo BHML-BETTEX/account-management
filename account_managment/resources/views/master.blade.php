@@ -4,6 +4,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1" />
 
   <title>Dashboard</title>
@@ -709,7 +710,7 @@
   <!--Lead reminder modal-->
   <div id="lead_reminder_modal"></div>
 
-
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script type="text/javascript" id="vendor-js" src="{{ asset('assets/builds/vendor-admin.js') }}"></script>
   <script type="text/javascript" id="jquery-migrate-js" src="{{ asset('assets/plugins/jquery/jquery-migrate.min.js') }}"></script>
   <script type="text/javascript" id="datatables-js" src="{{ asset('assets/plugins/datatables/datatables.min.js') }}"></script>

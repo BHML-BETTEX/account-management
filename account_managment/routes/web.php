@@ -85,6 +85,7 @@ Route::get('/general_journal', [AccuntingController::class, 'general_journal'])-
 Route::get('/add_general_journal', [AccuntingController::class, 'add_general_journal'])->name('add_general_journal');
 Route::post('/general_journal/store', [AccuntingController::class, 'general_journal_store'])->name('general_journal_store');
 Route::get('/general_journal/list', [AccuntingController::class, 'general_journal_list'])->name('general_journal_list');
+Route::get('/journal/details/{id}', [AccuntingController::class, 'journalDetails'])->name('journal.details');
 Route::get('/general-journal/{id}', [AccuntingController::class, 'show'])->name('edit_genaral_journal');
 Route::put('/general-journal/{id}', [AccuntingController::class, 'update'])->name('general_journal_update');
 
@@ -99,6 +100,7 @@ Route::post('/adjustment_journal/store', [AccuntingController::class, 'adjustmen
 //unposted Journal
 Route::get('/unposted_journal', [AccuntingController::class, 'unposted_journal'])->name('unposted_journal');
 Route::post('/update-posted-status', [AccuntingController::class, 'updatePostedStatus'])->name('update.posted.status');
+
 
 
 //others payment Entry

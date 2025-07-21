@@ -8,5 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class ac_type extends Model
 {
     use HasFactory;
-    protected $fillable  = ['typename'];
+
+    // 👇 Add this line to override default table name
+    protected $table = 'ac_type';
+
+    protected $fillable = ['typecode', 'typename'];
 }

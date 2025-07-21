@@ -94,6 +94,7 @@
                                 <th>Date Of Entry</th>
                                 <th>Narations</th>
                                 <th>Posted</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -110,6 +111,14 @@
                                             {{ $datamain->posted ? 'checked' : '' }}>
                                         <span class="onoffswitch-label" data-on="ON" data-off="OFF"></span>
                                     </label>
+                                </td>
+                                <td>
+                                    <a href="{{ route('edit_genaral_journal', $datamain->id) }}"
+                                        class="label label-success"
+                                        data-toggle="tooltip"
+                                        title="Edit">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
                                 </td>
                             </tr>
                             @endforeach
@@ -142,7 +151,6 @@
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script> {{-- For CSV, Excel, PDF --}}
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script> {{-- For Print --}}
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.colVis.min.js"></script> {{-- For Column Visibility --}}
-
 
 <script>
     $(document).ready(function() {
@@ -257,8 +265,8 @@
 </script>
 
 <script>
-    $(document).ready(function () {
-        $('.toggle-posted').change(function () {
+    $(document).ready(function() {
+        $('.toggle-posted').change(function() {
             var checkbox = $(this);
             var id = checkbox.data('id');
             var posted = checkbox.is(':checked') ? 1 : 0;
@@ -271,15 +279,15 @@
                     id: id,
                     posted: posted
                 },
-                success: function (response) {
+                success: function(response) {
                     if (posted === 1) {
                         // Remove the table row if posted
-                        checkbox.closest('tr').fadeOut(300, function () {
+                        checkbox.closest('tr').fadeOut(300, function() {
                             $(this).remove();
                         });
                     }
                 },
-                error: function () {
+                error: function() {
                     alert('Failed to update status');
                     // Revert checkbox state on failure
                     checkbox.prop('checked', !posted);
@@ -288,6 +296,31 @@
         });
     });
 </script>
+@if (session('success'))
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true,
+            showClass: {
+                popup: 'swal2-noanimation', // disables bounce
+                backdrop: 'swal2-noanimation'
+            },
+            hideClass: {
+                popup: '', // fade out by default
+            }
+        });
+
+        Toast.fire({
+            icon: 'success',
+            title: `{!! session('success') !!}`
+        });
+    });
+</script>
+@endif
 
 @endpush

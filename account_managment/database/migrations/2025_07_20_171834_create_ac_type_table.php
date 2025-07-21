@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ac_types', function (Blueprint $table) {
+        Schema::create('ac_type', function (Blueprint $table) {
             $table->id();
-            $table->string('typename');
+            $table->integer('typecode')->nullable();
+            $table->string('typename')->nullable();
             $table->timestamps();
         });
     }
@@ -23,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ac_types');
+        Schema::dropIfExists('ac_type');
     }
 };
