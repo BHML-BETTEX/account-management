@@ -106,13 +106,16 @@
                                 <td>{{ $main->voucherno }}</td>
                                 <td>{{ $main->particulars }}</td>
                                 <td>
-                                    <a href="{{ route('edit_genaral_journal', $main->id) }}"
-                                        class="label label-success"
-                                        data-toggle="tooltip"
+                                    <a href="javascript:void(0)"
+                                        class="label label-success view-details"
+                                        data-toggle="modal"
+                                        data-target="#myModal"
+                                        data-id="{{ $main->id }}" {{-- add voucher id here --}}
                                         title="View & Edit">
                                         <i class="fa fa-eye"></i>
                                     </a>
                                 </td>
+
                             </tr>
                             @endforeach
                         </tbody>
@@ -121,8 +124,43 @@
             </div>
         </div>
     </div>
-
 </div>
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Voucher Details</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-accounts table-striped table-bordered" style="width:100%">
+                    <thead style="background-color: #e5f4f9;">
+                        <tr>
+                            <th>#</th>
+                            <th>Date of Transaction</th>
+                            <th>Voucher Number</th>
+                            <th>Particulars</th>
+                            <th>Accountscode</th>
+                            <th>Naration</th>
+                            <th>Debit</th>
+                            <th>Credit</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalTableBody">
+                        {{-- will be filled dynamically --}}
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 
 @endsection
 
@@ -256,7 +294,54 @@
             }
         });
     });
-     $('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="tooltip"]').tooltip();
 </script>
+
+<script>
+    $(document).ready(function() {
+
+        // Delegate click and prevent duplicate handlers
+        $(document).off('click', '.view-details').on('click', '.view-details', function() {
+            var voucherId = $(this).data('id');
+            var $modalBody = $('#modalTableBody');
+            var $modalTitle = $('.modal-title');
+
+            $modalBody.empty(); // clear old rows
+            $modalTitle.text('Loading...');
+
+            $.ajax({
+                url: '/journal/details/' + voucherId,
+                method: 'GET',
+                success: function(data) {
+                    if (data && data.details && data.details.length > 0) {
+                        $.each(data.details, function(index, detail) {
+                            var row = '<tr>' +
+                                '<td>' + (index + 1) + '</td>' +
+                                '<td>' + data.dateoftransaction + '</td>' +
+                                '<td>' + data.voucherno + '</td>' +
+                                '<td>' + data.particulars + '</td>' +
+                                '<td>' + detail.accountscode + '</td>' +
+                                '<td>' + detail.naration + '</td>' +
+                                '<td>' + parseFloat(detail.debit).toFixed(2) + '</td>' +
+                                '<td>' + parseFloat(detail.credit).toFixed(2) + '</td>' +
+                                '</tr>';
+                            $modalBody.append(row);
+                        });
+                    } else {
+                        $modalBody.append('<tr><td colspan="8" class="text-center">No details found.</td></tr>');
+                    }
+                    $modalTitle.text('Voucher Details: ' + data.voucherno);
+                },
+                error: function() {
+                    $modalBody.html('<tr><td colspan="8" class="text-center text-danger">Failed to load data.</td></tr>');
+                    $modalTitle.text('Voucher Details');
+                }
+            });
+        });
+
+    });
+</script>
+
+
 
 @endpush

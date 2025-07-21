@@ -301,8 +301,15 @@ class AccuntingController extends Controller
         $detailtransition = AcTransactionDetail::all();
         return view('admin.journal.general_journal_list', [
             'maintransition' => $maintransition,
-            'detailtransition'=> $detailtransition,
+            'detailtransition' => $detailtransition,
         ]);
+    }
+
+
+    function journalDetails($id)
+    {      
+        $maintransition = AcTransactionMain::with('details')->findOrFail($id);
+        return response()->json($maintransition);
     }
 
     function show($id)
