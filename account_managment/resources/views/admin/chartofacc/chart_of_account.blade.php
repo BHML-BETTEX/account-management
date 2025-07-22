@@ -150,7 +150,7 @@
                                         class="label label-success edit-btn"
                                         data-toggle="modal"
                                         data-target="#account-modaledit"
-                                        data-id="{{ $ac_cartofaccs->coa_id }}"
+                                        data-id="{{ $ac_cartofaccs->id }}"
                                         data-mainheadid="{{ $ac_cartofaccs->mainhead_id }}"
                                         data-mainheadcode="{{ $ac_cartofaccs->mainheadcode }}"
                                         data-accountsheadname="{{ $ac_cartofaccs->accountsheadname }}"
@@ -275,32 +275,16 @@
                 @csrf
 
                 <div class="modal-body">
-                    <input type="hidden" name="coa_id" id="edit_coa_id">
-                    <div class="select-placeholder form-group" app-field-wrapper="account_detail_type_id"><label for="account_detail_type_id" class="control-label">Main Head</label>
-                        <select id="edit_mainhead_id" name="mainhead_id" class="selectpicker" data-width="100%">
-                            @foreach($main_head as $main_heads)
-                            <option value="{{$main_heads->mainhead_id}}">{{$main_heads->mainheadname}}</option>
-                            @endforeach
-                        </select>
-
-                        <input type="hidden" name="mainheadcode" id="edit_mainheadcode" class="form-control">
-
+                    <input type="hidden" name="id" id="edit_id">
                         <div class="form-group" app-field-wrapper="name"><label for="name" class="control-label">Account Head:</label>
                             <input type="text" name="accountsheadname" id="edit_accountsheadname" class="form-control">
-
-                            <div class="select-placeholder form-group" app-field-wrapper="account_detail_type_id"><label for="account_detail_type_id" class="control-label">Category</label>
-                                <select name="category" id="edit_category" class="selectpicker" data-width="100%">
-                                    @foreach($ac_category as $ac_categorys)
-                                    <option value="{{$ac_categorys->id}}">{{$ac_categorys->long_name}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-info btn-submit">Update</button>
                         </div>
                     </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-info btn-submit">Update</button>
+                    </div>
+                </div>
 
             </form>
 
@@ -496,7 +480,7 @@
 
         editButtons.forEach(button => {
             button.addEventListener('click', function() {
-                document.getElementById('edit_coa_id').value = this.dataset.id;
+                document.getElementById('edit_id').value = this.dataset.id;
                 document.getElementById('edit_mainhead_id').value = this.dataset.mainheadid;
                 document.getElementById('edit_mainheadcode').value = this.dataset.mainheadcode;
                 document.getElementById('edit_accountsheadname').value = this.dataset.accountsheadname;

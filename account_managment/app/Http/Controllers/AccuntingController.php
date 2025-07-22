@@ -212,7 +212,7 @@ class AccuntingController extends Controller
     public function chart_of_account_update(Request $request)
     {
         DB::table('ac_chartofacc')
-            ->where('coa_id', $request->coa_id)
+            ->where('id', $request->id)
             ->update([
                 'mainhead_id' => $request->mainhead_id,
                 'accountsheadname' => $request->accountsheadname,
