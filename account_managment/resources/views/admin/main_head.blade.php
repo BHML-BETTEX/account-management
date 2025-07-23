@@ -120,9 +120,10 @@
                 <hr class="hr-panel-heading" />
                 <form action="{{ route('main_head_store') }}" method="post" accept-charset="utf-8">
                     @csrf
-                    <div class="form-group select-placeholder">
+                    <div class="form-group">
                         <label for="controlcode">Account Control</label>
-                        <select name="controlcode" id="controlcode" class="selectpicker form-control" data-width="100%" data-none-selected-text="None selected">
+                        <select name="controlcode" id="controlcode" class="form-control select2" data-placeholder="Select Control">
+                            <option></option>
                             @foreach ($account_control as $account_controls)
                             <option value="{{ $account_controls->controlcode }}">
                                 {{ $account_controls->controlname }}
@@ -271,6 +272,15 @@
             if (e.key === 'Enter' || e.keyCode === 13) {
                 $('#customSearchButton').click(); // Simulate a click on the search button
             }
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#controlcode').select2({
+            placeholder: 'Select Control',
+            allowClear: true
         });
     });
 </script>

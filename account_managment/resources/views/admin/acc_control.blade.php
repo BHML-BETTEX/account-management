@@ -118,12 +118,13 @@
                 <form action="{{route('acc_control_store')}}" method="post" accept-charset="utf-8">
                     @csrf
 
-                    <div class="form-group select-placeholder">
+                    <div class="form-group">
                         <label for="export_type">Account Type</label>
-                        <select name="typecode" id="export_type" class="selectpicker form-control" data-width="100%" data-none-selected-text="None selected">
+                        <select name="typecode" id="export_type" class="form-control select2" data-placeholder="Select Account Type">
+                            <option></option> {{-- Needed for the placeholder to show --}}
                             @foreach ($account_type as $account_types)
-                            <option value="{{$account_types->id}}">
-                                {{$account_types->typename}}
+                            <option value="{{ $account_types->id }}">
+                                {{ $account_types->typename }}
                             </option>
                             @endforeach
                         </select>
@@ -271,6 +272,15 @@
             if (e.key === 'Enter' || e.keyCode === 13) {
                 $('#customSearchButton').click(); // Simulate a click on the search button
             }
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#export_type').select2({
+            placeholder: 'Select Control',
+            allowClear: true
         });
     });
 </script>
