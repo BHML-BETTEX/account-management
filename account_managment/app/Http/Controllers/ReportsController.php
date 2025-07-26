@@ -10,6 +10,8 @@ use Illuminate\Support\Collection;
 
 class ReportsController extends Controller
 {
+    
+
     function generalladger()
     {
         $chart_of_acc = AcCartofacc::all();
@@ -28,9 +30,29 @@ class ReportsController extends Controller
         ['date' => '02-01-2023', 'voucher_no' => '1202300004', 'description' => 'Sample Purchase', 'debit' => 0, 'credit' => 65],
         // ... Add all records as needed
     ]);
+    $accountId='1000000';
+    $startDate='2025-07-01';
+    $endDate='2025-07-31';
+
+    $employee_salarys =DB::select('CALL sp_hr_payroll(?, ?, ?, ?)', [
+        7,
+        2025,
+        $startDate,
+        $endDate,
+    ]);  
+
+
+    $rawData = DB::select('CALL sp_ac_ledger_tformat(?, ?, ?)', [
+        $accountId,
+        $startDate,
+        $endDate,
+    ]);
+    $data = collect($rawData);
         return view('admin.reports.generalladger', [
             //dd($chart_of_acc),
-            'chart_of_acc' => $chart_of_acc,'entries' => $entries
+            'chart_of_acc' => $chart_of_acc,'entries' => $entries,'data' => $data,'employee_salarys' => $employee_salarys,
+            'startDate' => $startDate,'endDate' => $endDate,'ip_month' => 7,'ip_year' => 2025
+
         ]);
     }
 
@@ -47,7 +69,7 @@ class ReportsController extends Controller
     function trialbalance(Request $request)
     {
         //$date = $request->input('date', now()->toDateString());
-        $date = '2025-07-21';
+        $date = '2025-07-24';
 
         $results = DB::select("CALL sp_print_trialbalance(?)", [$date]);
 
@@ -63,7 +85,7 @@ class ReportsController extends Controller
     public function profit_loss(Request $request)
     {
         //$date = $request->input('date', now()->toDateString());
-        $date = '2025-07-21';
+        $date = '2025-07-24';
 
         $pdo = \Illuminate\Support\Facades\DB::getPdo();
 
@@ -97,7 +119,7 @@ class ReportsController extends Controller
     function balance_sheet()
     {
 
-        $date = '2025-07-21';
+        $date = '2025-07-24';
 
 
 

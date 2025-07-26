@@ -261,7 +261,7 @@ class AccuntingController extends Controller
                 'dateoftransaction' => $request->input('dateoftransaction'),
                 'manualvoucherno' => $request->input('manualvoucherno'),
                 'trcode' => $request->input('trcode'),
-                'vouchertype' => 3,
+                'vouchertype' => $request->input('trcode'),
                 'particulars' => $request->input('particulars'),
                 'created_at' => Carbon::now(),
             ]);
