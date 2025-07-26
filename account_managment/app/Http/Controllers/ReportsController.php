@@ -30,6 +30,7 @@ class ReportsController extends Controller
         ['date' => '02-01-2023', 'voucher_no' => '1202300004', 'description' => 'Sample Purchase', 'debit' => 0, 'credit' => 65],
         // ... Add all records as needed
     ]);
+
     $accountId='1000000';
     $startDate='2025-07-01';
     $endDate='2025-07-31';
@@ -51,7 +52,7 @@ class ReportsController extends Controller
         return view('admin.reports.generalladger', [
             //dd($chart_of_acc),
             'chart_of_acc' => $chart_of_acc,'entries' => $entries,'data' => $data,'employee_salarys' => $employee_salarys,
-            'startDate' => $startDate,'endDate' => $endDate,'ip_month' => 7,'ip_year' => 2025
+            'startDate' => $startDate,'endDate' => $endDate,'ip_month' => 7,'ip_year' => 2025,'accountId' => $accountId
 
         ]);
     }
@@ -123,7 +124,7 @@ class ReportsController extends Controller
 
 
 
-        $pdo = \Illuminate\Support\Facades\DB::getPdo();
+    $pdo = \Illuminate\Support\Facades\DB::getPdo();
 
         // Call the procedure with a date parameter
     $stmt = $pdo->prepare("CALL sp_balancesheet(?)");

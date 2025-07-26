@@ -65,7 +65,7 @@
     // Save or display $payroll info
 @endforeach --}}
 
-
+        Account Code : {{$accountId}}
         <table border="1" width="100%">
             <thead>
                 <tr>
