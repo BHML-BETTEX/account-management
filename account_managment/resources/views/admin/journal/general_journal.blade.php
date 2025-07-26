@@ -106,7 +106,8 @@
                                     <!-- Initial row -->
                                     <tr>
                                         <td>
-                                            <select name="entries[0][accountscode]" class="form-control">
+                                            <select name="entries[0][accountscode]" class="form-control account-select select2">
+                                                <option value="">Select Account</option>
                                                 @foreach ($ac_cartofacc as $ac_cartofaccs)
                                                 <option value="{{ $ac_cartofaccs->accountscode }}">{{ $ac_cartofaccs->accountsheadname }}</option>
                                                 @endforeach
@@ -145,6 +146,7 @@
 
 
 <script>
+
     let rowCount = 1;
 
     function calculateTotals() {
@@ -203,5 +205,7 @@
     });
 
     window.addEventListener('DOMContentLoaded', calculateTotals);
+
 </script>
+
 @endsection

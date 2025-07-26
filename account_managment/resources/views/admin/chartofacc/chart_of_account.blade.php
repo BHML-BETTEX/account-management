@@ -150,7 +150,7 @@
                                         class="label label-success edit-btn"
                                         data-toggle="modal"
                                         data-target="#account-modaledit"
-                                        data-id="{{ $ac_cartofaccs->coa_id }}"
+                                        data-id="{{ $ac_cartofaccs->id }}"
                                         data-mainheadid="{{ $ac_cartofaccs->mainhead_id }}"
                                         data-mainheadcode="{{ $ac_cartofaccs->mainheadcode }}"
                                         data-accountsheadname="{{ $ac_cartofaccs->accountsheadname }}"
@@ -175,18 +175,20 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Add Account</h4>
+                <h4 class="modal-title">Add Accountsss</h4>
             </div>
             <form action="{{route('chart_of_account_store')}}" method="post" accept-charset="utf-8">
                 @csrf
                 <div class="modal-body">
 
-                    <div class="select-placeholder form-group" app-field-wrapper="account_detail_type_id"><label for="account_detail_type_id" class="control-label">Main Head </label>
-                        <select id="mainheadcode" name="mainheadcode" class="selectpicker" data-width="100%">
-                            <option value="">Select</option>
-                            @foreach($main_head as $key=>$main_heads){
-                            <option value="{{$main_heads->mainheadcode}}">{{$main_heads->mainheadname}}</option>
-                            }
+                    <div class="form-group">
+                        <label for="mainheadcode" class="control-label">Main Head</label>
+                        <select id="mainheadcode" name="mainheadcode" class="form-control select2" data-width="100%" data-placeholder="Select Main Head">
+                            <option></option>
+                            @foreach($main_head as $key => $main_heads)
+                            <option value="{{ $main_heads->mainheadcode }}">
+                                {{ $main_heads->mainheadname }}
+                            </option>
                             @endforeach
                         </select>
                     </div>
@@ -273,39 +275,20 @@
             </div>
             <form action="{{ route('chart_of_account_update') }}" method="post">
                 @csrf
-
                 <div class="modal-body">
-                    <input type="hidden" name="coa_id" id="edit_coa_id">
-                    <div class="select-placeholder form-group" app-field-wrapper="account_detail_type_id"><label for="account_detail_type_id" class="control-label">Main Head</label>
-                        <select id="edit_mainhead_id" name="mainhead_id" class="selectpicker" data-width="100%">
-                            @foreach($main_head as $main_heads)
-                            <option value="{{$main_heads->mainhead_id}}">{{$main_heads->mainheadname}}</option>
-                            @endforeach
-                        </select>
-
-                        <input type="hidden" name="mainheadcode" id="edit_mainheadcode" class="form-control">
-
-                        <div class="form-group" app-field-wrapper="name"><label for="name" class="control-label">Account Head:</label>
-                            <input type="text" name="accountsheadname" id="edit_accountsheadname" class="form-control">
-
-                            <div class="select-placeholder form-group" app-field-wrapper="account_detail_type_id"><label for="account_detail_type_id" class="control-label">Category</label>
-                                <select name="category" id="edit_category" class="selectpicker" data-width="100%">
-                                    @foreach($ac_category as $ac_categorys)
-                                    <option value="{{$ac_categorys->id}}">{{$ac_categorys->long_name}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-info btn-submit">Update</button>
-                        </div>
+                    <input type="hidden" name="id" id="edit_id">
+                    <div class="form-group" app-field-wrapper="name"><label for="name" class="control-label">Account Head:</label>
+                        <input type="text" name="accountsheadname" id="edit_accountsheadname" class="form-control">
                     </div>
-
-            </form>
-
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-info btn-submit">Update</button>
+                </div>
         </div>
+        </form>
     </div>
+</div>
 </div>
 
 <!-- Add MainHead -->
@@ -376,6 +359,7 @@
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script> {{-- For CSV, Excel, PDF --}}
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script> {{-- For Print --}}
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.colVis.min.js"></script> {{-- For Column Visibility --}}
+
 
 
 <script>
@@ -488,6 +472,7 @@
             }
         });
     });
+    
 </script>
 
 <script>
@@ -496,7 +481,7 @@
 
         editButtons.forEach(button => {
             button.addEventListener('click', function() {
-                document.getElementById('edit_coa_id').value = this.dataset.id;
+                document.getElementById('edit_id').value = this.dataset.id;
                 document.getElementById('edit_mainhead_id').value = this.dataset.mainheadid;
                 document.getElementById('edit_mainheadcode').value = this.dataset.mainheadcode;
                 document.getElementById('edit_accountsheadname').value = this.dataset.accountsheadname;
@@ -508,4 +493,5 @@
         });
     });
 </script>
+
 @endpush

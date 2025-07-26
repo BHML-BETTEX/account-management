@@ -27,6 +27,8 @@
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.25/datatables.min.css" />
   {{-- DataTables Buttons Extension CSS --}}
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css" />
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 
   <!-- Scripts -->
 
@@ -723,6 +725,8 @@
   <script type="text/javascript" id="common-js" src="{{ asset('assets/builds/common.js') }}"></script>
   <script type="text/javascript" id="app-js" src="{{ asset('assets/js/main.min.js') }}"></script>
   <script type="text/javascript" id="full-calendar-js" src="{{ asset('assets/plugins/fullcalendar/fullcalendar.min.js') }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
   <script>
     function custom_fields_hyperlink() {
       var cf_hyperlink = $('body').find('.cf-hyperlink');
