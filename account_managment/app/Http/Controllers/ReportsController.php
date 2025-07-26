@@ -34,14 +34,14 @@ class ReportsController extends Controller
     $startDate='2025-07-01';
     $endDate='2025-07-31';
 
-    $employee_salarys =DB::select('CALL sp_hr_payroll(?, ?, ?, ?)', [
-        7,
-        2025,
-        $startDate,
-        $endDate,
-    ]);  
+    // $employee_salarys =DB::select('CALL sp_hr_payroll(?, ?, ?, ?)', [
+    //     7,
+    //     2025,
+    //     $startDate,
+    //     $endDate,
+    // ]);  
 
-
+    $employee_salarys=[];
     $rawData = DB::select('CALL sp_ac_ledger_tformat(?, ?, ?)', [
         $accountId,
         $startDate,

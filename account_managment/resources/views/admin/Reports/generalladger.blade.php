@@ -57,13 +57,13 @@
         <div id="reportContainer" class="report-container mt-4">
 
 
-@foreach ($employee_salarys as $employee_salary)
+{{-- @foreach ($employee_salarys as $employee_salary)
     @php 
         $payroll = calculatePayroll((array) $employee_salary, $ip_month, $ip_year);
     @endphp
     {{$payroll['net_payable_amount']}}
     // Save or display $payroll info
-@endforeach
+@endforeach --}}
 
 
         <table border="1" width="100%">
