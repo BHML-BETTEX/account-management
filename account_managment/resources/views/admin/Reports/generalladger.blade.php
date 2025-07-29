@@ -56,7 +56,77 @@
 
         <div id="reportContainer" class="report-container mt-4">
 
-        <table class="header-table">
+
+{{-- @foreach ($employee_salarys as $employee_salary)
+    @php 
+        $payroll = calculatePayroll((array) $employee_salary, $ip_month, $ip_year);
+    @endphp
+    {{$payroll['net_payable_amount']}}
+    // Save or display $payroll info
+@endforeach --}}
+
+
+        <table border="1" width="100%">
+            <thead>
+                <tr>
+                    <th colspan="4">Dr.</th>
+                    <th colspan="4">Cr.</th>
+                </tr>
+                <tr>
+                    <th>Date</th>
+                    <th>Particulars</th>
+                    <th>J.F.</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Particulars</th>
+                    <th>J.F.</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php
+                    $debits = $data->where('entry_type', 'Dr')->values();
+                    $credits = $data->where('entry_type', 'Cr')->values();
+                    $max = max($debits->count(), $credits->count());
+                @endphp
+
+                @for ($i = 0; $i < $max; $i++)
+                    <tr>
+                        {{-- Debit Side --}}
+                        <td>{{ $debits[$i]->ledger_date ?? '' }}</td>
+                        <td>{{ $debits[$i]->particulars ?? '' }}</td>
+                        <td>{{ $debits[$i]->voucherno ?? '' }}</td>
+                        <td>{{ number_format($debits[$i]->amount ?? 0, 2) }}</td>
+
+                        {{-- Credit Side --}}
+                        <td>{{ $credits[$i]->ledger_date ?? '' }}</td>
+                        <td>{{ $credits[$i]->particulars ?? '' }}</td>
+                        <td>{{ $credits[$i]->voucherno ?? '' }}</td>
+                        <td>{{ number_format($credits[$i]->amount ?? 0, 2) }}</td>
+                    </tr>
+                @endfor
+
+                {{-- Totals and Balance --}}
+                <tr>
+                    <td colspan="3">To Balance c/d</td>
+                    <td><strong>{{ number_format($debits->sum('amount'), 2) }}</strong></td>
+                    <td colspan="3">By Balance c/d</td>
+                    <td><strong>{{ number_format($credits->sum('amount'), 2) }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+
+
+
+
+
+
+
+
+        {{-- <table class="header-table" style="display: none">
                 <tr>
                     <td colspan="3">General Ledger</td>
                     <td class="right" colspan="2">Page 1 of 1</td>
@@ -112,7 +182,7 @@
                         <td class="right">{{ number_format($balance, 2) }}</td>
                     </tr>
                 </tbody>
-            </table>
+            </table> --}}
 
         </div>
     </div>

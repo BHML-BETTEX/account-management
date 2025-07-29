@@ -47,11 +47,14 @@
 
                     @foreach (($grouped['Assets'] ?? collect())->groupBy('controlname') as $control => $items)
                         <tr><td class="group-title" colspan="2">{{ $control }}</td></tr>
-                        @foreach ($items as $item)
-                            <tr>
-                                <td>{{ $item['mainheadname'] }}</td>
-                                <td class="amount">{{ format_money($item['closing_bal']) }}</td>
-                            </tr>
+                         @foreach ((collect($items) ?? collect())->groupBy('mainheadcode') as $mainheadcode => $lastitems);
+                            <tr><td class="group-title" colspan="2">{{ $mainheadcode }}</td></tr>
+                            @foreach ($lastitems as $item)
+                                <tr>
+                                    <td>{{ $item['op_accountscode'] }} {{ $item['op_accountsheadname'] }}</td>
+                                    <td class="amount">{{ format_money($item['closing_bal']) }}</td>
+                                </tr>
+                            @endforeach
                         @endforeach
                     @endforeach
                     <tr class="border-top">

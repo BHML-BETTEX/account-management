@@ -14,12 +14,12 @@ class ReportsController extends Controller
     function generalladger()
     {
         $chart_of_acc = AcCartofacc::all();
-        //$entries =  DB::table('vw_chartofaccounts')->get(); 
         $objects = DB::select("select * from vw_ledgerfinal");
 
         $entries = array_map(function ($item) {
             return (array) $item;
         }, $objects);
+
         $entries1 = collect([
             ['date' => '01-01-2023', 'voucher_no' => '3202300001', 'description' => 'Opening Cash', 'debit' => 13298, 'credit' => 0],
             ['date' => '01-01-2023', 'voucher_no' => '3202300001', 'description' => 'Loan From BHML', 'debit' => 200000, 'credit' => 0],
@@ -27,12 +27,31 @@ class ReportsController extends Controller
             ['date' => '02-01-2023', 'voucher_no' => '1202300002', 'description' => 'Courier Bill', 'debit' => 0, 'credit' => 5500],
             ['date' => '02-01-2023', 'voucher_no' => '1202300003', 'description' => 'Material Purchase', 'debit' => 0, 'credit' => 55300],
             ['date' => '02-01-2023', 'voucher_no' => '1202300004', 'description' => 'Sample Purchase', 'debit' => 0, 'credit' => 65],
-            // ... Add all records as needed
         ]);
+
+        $accountId = '1000000';
+        $startDate = '2025-07-01';
+        $endDate = '2025-07-31';
+
+        $employee_salarys = [];
+
+        $rawData = DB::select('CALL sp_ac_ledger_tformat(?, ?, ?)', [
+            $accountId,
+            $startDate,
+            $endDate,
+        ]);
+
+        $data = collect($rawData);
+
         return view('admin.reports.generalladger', [
-            //dd($chart_of_acc),
             'chart_of_acc' => $chart_of_acc,
-            'entries' => $entries
+            'entries' => $entries,
+            'data' => $data,
+            'employee_salarys' => $employee_salarys,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'ip_month' => 7,
+            'ip_year' => 2025
         ]);
     }
 
@@ -66,30 +85,22 @@ class ReportsController extends Controller
         ]);
     }
 
-
     public function profit_loss(Request $request)
     {
-        //$date = $request->input('date', now()->toDateString());
-        $date = '2025-07-21';
+        $date = '2025-07-24';
 
-        $pdo = \Illuminate\Support\Facades\DB::getPdo();
+        $pdo = DB::getPdo();
 
-        // Call the procedure with a date parameter
         $stmt = $pdo->prepare("CALL sp_incomestatement(?)");
         $stmt->execute([$date]);
 
-        // 1st result set (Trial Balance)
         $trialBalance = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        // 2nd result set (Trial Balance)
         $stmt->nextRowset();
         $incomeStatement = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         $results = $incomeStatement;
 
-
-        // Group data by mainheadcode
         $grouped = collect($results)->groupBy('op_ctrlcode');
-        // Calculate total amount (Assuming all are expenses for now)
         $netLoss = collect($results)->sum('op_bal');
 
         return view('admin.reports.profit_loss', [
@@ -101,36 +112,27 @@ class ReportsController extends Controller
 
     function balance_sheet()
     {
+        $date = '2025-07-24';
 
-        $date = '2025-07-21';
+        $pdo = DB::getPdo();
 
-
-
-        $pdo = \Illuminate\Support\Facades\DB::getPdo();
-
-        // Call the procedure with a date parameter
         $stmt = $pdo->prepare("CALL sp_balancesheet(?)");
         $stmt->execute([$date]);
 
-        // 1st result set (Trial Balance)
         $trialBalance = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        // 2nd result set (Trial Balance)
         $stmt->nextRowset();
         $trialBalance1 = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        // move to 3rd result set (Balance Sheet)
         $stmt->nextRowset();
         $incomeStatement = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        // move to 4th result set (Balance Sheet)
         $stmt->nextRowset();
         $balanceSheet = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         $results = $balanceSheet;
 
-        // Group results by typename (Assets, Liabilities, Equity)
         $grouped = collect($results)->groupBy('typename');
-        // Calculate totals
+
         $totals = $grouped->map(function ($items) {
             return [
                 'opening' => $items->sum('opening_bal'),
@@ -153,7 +155,6 @@ class ReportsController extends Controller
         return $pdf->download('balance_sheet.pdf');
     }
 
-
     public function voucher_list(Request $request)
     {
         $from = $request->input('from_date');
@@ -161,7 +162,6 @@ class ReportsController extends Controller
 
         $data = DB::select("CALL sp_voucher_list()");
 
-        // Laravel-side filtering
         if ($from && $to) {
             $data = collect($data)->filter(function ($item) use ($from, $to) {
                 return $item->dateoftransaction >= $from && $item->dateoftransaction <= $to;
