@@ -307,7 +307,7 @@ class AccuntingController extends Controller
 
 
     function journalDetails($id)
-    {      
+    {
         $maintransition = AcTransactionMain::with('details')->findOrFail($id);
         return response()->json($maintransition);
     }
@@ -384,34 +384,38 @@ class AccuntingController extends Controller
         DB::beginTransaction();
 
         try {
+            $amount = $request->input('amount');
+            $naration = 'Adjustment: ' . $request->input('particulars');
+
             $main = AcTransactionMain::create([
-                'selfid' => $request->input('selfid'),
                 'dateoftransaction' => $request->input('dateoftransaction'),
                 'trcode' => 3,
                 'vouchertype' => 3,
-                'particulars' => 'Adjustment Entry',
+                'particulars' => $request->input('particulars'),
                 'created_at' => Carbon::now(),
             ]);
 
-            $main->refresh(); // Ensure voucherno is set if it's auto-generated
+            $main->refresh();
+            $main->selfid = $main->id;
+            $main->save();
 
-            foreach ($request->input('entries') as $entry) {
-                if (
-                    !empty($entry['accountscode']) &&
-                    (
-                        (!empty($entry['debit']) && $entry['debit'] != 0) ||
-                        (!empty($entry['credit']) && $entry['credit'] != 0)
-                    )
-                ) {
-                    AcTransactionDetail::create([
-                        'voucherno' => $main->voucherno,
-                        'accountscode' => $entry['accountscode'],
-                        'naration' => $entry['naration'] ?? '',
-                        'debit' => $entry['debit'] ?? 0,
-                        'credit' => $entry['credit'] ?? 0,
-                    ]);
-                }
-            }
+            // Debit Entry
+            AcTransactionDetail::create([
+                'voucherno' => $main->voucherno,
+                'accountscode' => $request->input('entries.0.accountscode'),
+                'naration' => $naration,
+                'debit' => $amount,
+                'credit' => 0,
+            ]);
+
+            // Credit Entry
+            AcTransactionDetail::create([
+                'voucherno' => $main->voucherno,
+                'accountscode' => $request->input('entries.1.accountscode'),
+                'naration' => $naration,
+                'debit' => 0,
+                'credit' => $amount,
+            ]);
 
             DB::commit();
             return redirect()->back()->with('success', 'Adjustment Journal Entry saved successfully.');
@@ -420,6 +424,7 @@ class AccuntingController extends Controller
             return redirect()->back()->with('error', 'Error saving data: ' . $e->getMessage());
         }
     }
+
 
     //===================Unposted Journal==================
     function unposted_journal()
