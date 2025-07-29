@@ -6,6 +6,7 @@ use App\Models\AcCartofacc;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 class ReportsController extends Controller
@@ -14,23 +15,24 @@ class ReportsController extends Controller
     {
         $chart_of_acc = AcCartofacc::all();
         //$entries =  DB::table('vw_chartofaccounts')->get(); 
-        $objects= DB::select("select * from vw_ledgerfinal");
+        $objects = DB::select("select * from vw_ledgerfinal");
 
         $entries = array_map(function ($item) {
-        return (array) $item;
+            return (array) $item;
         }, $objects);
         $entries1 = collect([
-        ['date' => '01-01-2023', 'voucher_no' => '3202300001', 'description' => 'Opening Cash', 'debit' => 13298, 'credit' => 0],
-        ['date' => '01-01-2023', 'voucher_no' => '3202300001', 'description' => 'Loan From BHML', 'debit' => 200000, 'credit' => 0],
-        ['date' => '02-01-2023', 'voucher_no' => '1202300001', 'description' => 'Daily Bazar Expense', 'debit' => 0, 'credit' => 5390],
-        ['date' => '02-01-2023', 'voucher_no' => '1202300002', 'description' => 'Courier Bill', 'debit' => 0, 'credit' => 5500],
-        ['date' => '02-01-2023', 'voucher_no' => '1202300003', 'description' => 'Material Purchase', 'debit' => 0, 'credit' => 55300],
-        ['date' => '02-01-2023', 'voucher_no' => '1202300004', 'description' => 'Sample Purchase', 'debit' => 0, 'credit' => 65],
-        // ... Add all records as needed
-    ]);
+            ['date' => '01-01-2023', 'voucher_no' => '3202300001', 'description' => 'Opening Cash', 'debit' => 13298, 'credit' => 0],
+            ['date' => '01-01-2023', 'voucher_no' => '3202300001', 'description' => 'Loan From BHML', 'debit' => 200000, 'credit' => 0],
+            ['date' => '02-01-2023', 'voucher_no' => '1202300001', 'description' => 'Daily Bazar Expense', 'debit' => 0, 'credit' => 5390],
+            ['date' => '02-01-2023', 'voucher_no' => '1202300002', 'description' => 'Courier Bill', 'debit' => 0, 'credit' => 5500],
+            ['date' => '02-01-2023', 'voucher_no' => '1202300003', 'description' => 'Material Purchase', 'debit' => 0, 'credit' => 55300],
+            ['date' => '02-01-2023', 'voucher_no' => '1202300004', 'description' => 'Sample Purchase', 'debit' => 0, 'credit' => 65],
+            // ... Add all records as needed
+        ]);
         return view('admin.reports.generalladger', [
             //dd($chart_of_acc),
-            'chart_of_acc' => $chart_of_acc,'entries' => $entries
+            'chart_of_acc' => $chart_of_acc,
+            'entries' => $entries
         ]);
     }
 
@@ -46,19 +48,24 @@ class ReportsController extends Controller
 
     function trialbalance(Request $request)
     {
-        //$date = $request->input('date', now()->toDateString());
-        $date = '2025-07-21';
+        $date = $request->input('report_date');
 
-        $results = DB::select("CALL sp_print_trialbalance(?)", [$date]);
+        if (!$date) {
+            $date = DB::table('ac_transactionmain')->orderByDesc('created_at')->value('created_at');
+        }
 
-        // Group by main head
+        $formattedDate = \Carbon\Carbon::parse($date)->toDateString();
+
+        $results = DB::select("CALL sp_print_trialbalance(?)", [$formattedDate]);
+
         $grouped = collect($results)->groupBy('op_mainheadcode');
 
         return view('admin.reports.trialbalance', [
             'grouped' => $grouped,
-            'report_date' => $date,
+            'report_date' => $formattedDate,
         ]);
     }
+
 
     public function profit_loss(Request $request)
     {
@@ -77,7 +84,7 @@ class ReportsController extends Controller
         // 2nd result set (Trial Balance)
         $stmt->nextRowset();
         $incomeStatement = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        $results=$incomeStatement;
+        $results = $incomeStatement;
 
 
         // Group data by mainheadcode
@@ -90,8 +97,6 @@ class ReportsController extends Controller
             'report_date' => $date,
             'net_loss' => $netLoss,
         ]);
-
-
     }
 
     function balance_sheet()
@@ -104,24 +109,24 @@ class ReportsController extends Controller
         $pdo = \Illuminate\Support\Facades\DB::getPdo();
 
         // Call the procedure with a date parameter
-    $stmt = $pdo->prepare("CALL sp_balancesheet(?)");
-    $stmt->execute([$date]);
+        $stmt = $pdo->prepare("CALL sp_balancesheet(?)");
+        $stmt->execute([$date]);
 
-    // 1st result set (Trial Balance)
-    $trialBalance = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        // 1st result set (Trial Balance)
+        $trialBalance = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-    // 2nd result set (Trial Balance)
-    $stmt->nextRowset();
-    $trialBalance1 = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        // 2nd result set (Trial Balance)
+        $stmt->nextRowset();
+        $trialBalance1 = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-    // move to 3rd result set (Balance Sheet)
-    $stmt->nextRowset();
-    $incomeStatement = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        // move to 3rd result set (Balance Sheet)
+        $stmt->nextRowset();
+        $incomeStatement = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-    // move to 4th result set (Balance Sheet)
-    $stmt->nextRowset();
-    $balanceSheet = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-    $results=$balanceSheet;
+        // move to 4th result set (Balance Sheet)
+        $stmt->nextRowset();
+        $balanceSheet = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $results = $balanceSheet;
 
         // Group results by typename (Assets, Liabilities, Equity)
         $grouped = collect($results)->groupBy('typename');
@@ -139,7 +144,6 @@ class ReportsController extends Controller
             'totals' => $totals,
             'report_date' => $date,
         ]);
-
     }
 
     public function downloadPdf()
@@ -152,21 +156,20 @@ class ReportsController extends Controller
 
     public function voucher_list(Request $request)
     {
-    $from = $request->input('from_date');
-    $to = $request->input('to_date');
+        $from = $request->input('from_date');
+        $to = $request->input('to_date');
 
-    $data = DB::select("CALL sp_voucher_list()");
+        $data = DB::select("CALL sp_voucher_list()");
 
-    // Laravel-side filtering
-    if ($from && $to) {
-        $data = collect($data)->filter(function ($item) use ($from, $to) {
-            return $item->dateoftransaction >= $from && $item->dateoftransaction <= $to;
-        });
+        // Laravel-side filtering
+        if ($from && $to) {
+            $data = collect($data)->filter(function ($item) use ($from, $to) {
+                return $item->dateoftransaction >= $from && $item->dateoftransaction <= $to;
+            });
+        }
+
+        return view('admin.Reports.voucher_list', [
+            'data' => $data,
+        ]);
     }
-
-    return view('admin.Reports.voucher_list', [
-        'data' => $data,
-    ]);
-}
-
 }
