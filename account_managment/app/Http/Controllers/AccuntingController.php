@@ -469,47 +469,69 @@ class AccuntingController extends Controller
         ]);
     }
 
-    function others_payment_store(Request $request)
+    public function others_payment_store(Request $request)
     {
         DB::beginTransaction();
 
         try {
+            $amount = $request->input('amount');
+            $cheque = $request->input('cheqno');
+            $paymode = $request->input('paymode');
+            $memo = $request->input('particulars');
+
+            // Create main transaction record
             $main = AcTransactionMain::create([
-                'selfid' => $request->input('selfid'),
                 'dateoftransaction' => $request->input('dateoftransaction'),
                 'trcode' => 1,
                 'vouchertype' => 1,
-                'particulars' => $request->input('particulars'),
+                'particulars' => $memo,
                 'created_at' => Carbon::now(),
             ]);
 
-            $main->refresh(); // Ensure voucherno is set if it's auto-generated
+            $main->refresh();
+            $main->selfid = $main->id;
+            $main->save();
 
-            foreach ($request->input('entries') as $entry) {
-                if (
-                    !empty($entry['accountscode']) &&
-                    (
-                        (!empty($entry['debit']) && $entry['debit'] != 0) ||
-                        (!empty($entry['credit']) && $entry['credit'] != 0)
-                    )
-                ) {
-                    AcTransactionDetail::create([
-                        'voucherno' => $main->voucherno,
-                        'accountscode' => $entry['accountscode'],
-                        'naration' => $entry['naration'] ?? '',
-                        'debit' => $entry['debit'] ?? 0,
-                        'credit' => $entry['credit'] ?? 0,
-                    ]);
-                }
+
+            $cashAccountName = $request->input('cash_account_name', 'Cash Account');
+            $bankAccountName = $request->input('bank_account_name', 'Bank Account');
+
+            if ($paymode === 'Cash') {
+                $naration = $memo . ' Paid from: ' . $cashAccountName;
+            } elseif ($paymode === 'Cheque') {
+                $naration = $memo . ' Paid from: ' . $bankAccountName;
+            } else {
+                $naration = $memo;
             }
 
+            // Debit Entry
+            AcTransactionDetail::create([
+                'voucherno' => $main->voucherno,
+                'accountscode' => $request->input('entries.0.accountscode'),
+                'naration' => $naration,
+                'debit' => $amount,
+                'credit' => 0,
+                'cheqno' => 123,
+            ]);
+
+
+            AcTransactionDetail::create([
+                'voucherno' => $main->voucherno,
+                'accountscode' => 1000100,
+                'naration' => $naration,
+                'debit' => 0,
+                'credit' => $amount,
+                'cheqno' => 123,
+            ]);
+
             DB::commit();
-            return redirect()->back()->with('success', 'Adjustment Journal Entry saved successfully.');
+            return redirect()->back()->with('success', 'Payment entry saved successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Error saving data: ' . $e->getMessage());
         }
     }
+
     // transaation main 1 record
     //transetion detail 2 record
 

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class AcTransactionDetail extends Model
 {
     protected $table = 'ac_transactiondetail';
-    protected $fillable = ['voucherno', 'accountscode', 'naration', 'debit', 'credit'];
+    protected $fillable = ['voucherno', 'accountscode', 'naration', 'debit', 'credit', 'cheqno'];
 
     public function main()
     {

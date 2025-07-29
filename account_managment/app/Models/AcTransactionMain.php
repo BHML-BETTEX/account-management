@@ -9,7 +9,7 @@ class AcTransactionMain extends Model
 {
     
      protected $table = 'ac_transactionmain';
-    protected $fillable = ['trcode','dateoftransaction', 'voucherno', 'particulars', 'vouchertype', 'manualvoucherno'];
+    protected $fillable = ['trcode','dateoftransaction', 'voucherno', 'particulars', 'vouchertype', 'manualvoucherno', 'selfid'];
 
     public function details()
     {
