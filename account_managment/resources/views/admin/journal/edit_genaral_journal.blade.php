@@ -1,6 +1,10 @@
 @extends('master')
 
 @section('content')
+<!-- Include Select2 and Font Awesome -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+
 <style>
     .form-row {
         display: flex;
@@ -34,7 +38,8 @@
         background-color: white;
     }
 
-    th, td {
+    th,
+    td {
         padding: 8px;
         border: 1px solid #ccc;
         text-align: left;
@@ -54,13 +59,13 @@
         background: #fff;
         padding: 20px;
         border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
     }
 </style>
 
 <div class="contain">
     <div class="widget-content">
-        <div class="panel panel-default">
+        <div class="panel panel-default mt-4">
             <div class="panel-body">
                 <div class="row">
                     <div class="col-md-12">
@@ -80,17 +85,17 @@
                                 <div class="form-group">
                                     <label for="date">Date</label>
                                     <input type="date" name="dateoftransaction" class="form-control"
-                                           value="{{ old('dateoftransaction', isset($entry) ? $entry->dateoftransaction : date('Y-m-d')) }}">
+                                        value="{{ old('dateoftransaction', isset($entry) ? $entry->dateoftransaction : date('Y-m-d')) }}">
                                 </div>
                                 <div class="form-group">
                                     <label for="manualvoucherno">Manual Voucher No</label>
                                     <input type="text" name="manualvoucherno" class="form-control"
-                                           value="{{ old('manualvoucherno', $entry->manualvoucherno ?? '') }}">
+                                        value="{{ old('manualvoucherno', $entry->manualvoucherno ?? '') }}">
                                 </div>
                                 <div class="form-group">
                                     <label for="particulars">Particulars</label>
                                     <input type="text" name="particulars" class="form-control" required
-                                           value="{{ old('particulars', $entry->particulars ?? '') }}">
+                                        value="{{ old('particulars', $entry->particulars ?? '') }}">
                                 </div>
                             </div>
 
@@ -105,39 +110,47 @@
                                     </tr>
                                 </thead>
                                 <tbody id="entries-body">
+                                    @php $rowCount = 0; @endphp
                                     @if(isset($entry) && $entry->details)
                                         @foreach($entry->details as $index => $detail)
-                                        <tr>
-                                            <td>
-                                                <select name="entries[{{ $index }}][accountscode]" class="form-control">
-                                                    @foreach ($ac_cartofacc as $ac_cartofaccs)
-                                                        <option value="{{ $ac_cartofaccs->accountscode }}"
-                                                            {{ $ac_cartofaccs->accountscode == $detail->accountscode ? 'selected' : '' }}>
-                                                            {{ $ac_cartofaccs->accountsheadname }}
+                                            <tr>
+                                                <td>
+                                                    <select name="entries[{{ $index }}][accountscode]" class="form-control select2">
+                                                        @foreach ($ac_cartofacc as $acc)
+                                                        <option value="{{ $acc->accountscode }}" {{ $acc->accountscode == $detail->accountscode ? 'selected' : '' }}>
+                                                            {{ $acc->accountsheadname }}
                                                         </option>
-                                                    @endforeach
-                                                </select>
-                                            </td>
-                                            <td><input type="text" name="entries[{{ $index }}][naration]" class="form-control" value="{{ $detail->naration }}"></td>
-                                            <td><input type="number" name="entries[{{ $index }}][debit]" class="form-control debit" value="{{ $detail->debit }}" step="0.01"></td>
-                                            <td><input type="number" name="entries[{{ $index }}][credit]" class="form-control credit" value="{{ $detail->credit }}" step="0.01"></td>
-                                            <td><button type="button" class="btn btn-danger remove-row">-</button></td>
-                                        </tr>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                <td><input type="text" name="entries[{{ $index }}][naration]" class="form-control" value="{{ $detail->naration }}"></td>
+                                                <td><input type="number" name="entries[{{ $index }}][debit]" class="form-control debit" value="{{ $detail->debit }}" step="0.01"></td>
+                                                <td><input type="number" name="entries[{{ $index }}][credit]" class="form-control credit" value="{{ $detail->credit }}" step="0.01"></td>
+                                                <td>
+                                                    <button type="button" class="btn btn-danger remove-row" title="Remove">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            @php $rowCount++; @endphp
                                         @endforeach
-                                        @php $rowCount = count($entry->details); @endphp
                                     @else
                                         <tr>
                                             <td>
-                                                <select name="entries[0][accountscode]" class="form-control">
-                                                    @foreach ($ac_cartofacc as $ac_cartofaccs)
-                                                    <option value="{{ $ac_cartofaccs->accountscode }}">{{ $ac_cartofaccs->accountsheadname }}</option>
+                                                <select name="entries[0][accountscode]" class="form-control select2">
+                                                    @foreach ($ac_cartofacc as $acc)
+                                                    <option value="{{ $acc->accountscode }}">{{ $acc->accountsheadname }}</option>
                                                     @endforeach
                                                 </select>
                                             </td>
                                             <td><input type="text" name="entries[0][naration]" class="form-control"></td>
                                             <td><input type="number" name="entries[0][debit]" class="form-control debit" value="0" step="0.01"></td>
                                             <td><input type="number" name="entries[0][credit]" class="form-control credit" value="0" step="0.01"></td>
-                                            <td><button type="button" class="btn btn-danger remove-row">Remove</button></td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger remove-row" title="Remove">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </td>
                                         </tr>
                                         @php $rowCount = 1; @endphp
                                     @endif
@@ -156,8 +169,8 @@
                                 <button type="button" id="add-row" class="btn btn-primary">Add Row</button>
                                 <button type="submit" class="btn btn-success">{{ isset($entry) ? 'Update' : 'Save' }}</button>
                             </div>
-
                         </form>
+
                     </div>
                 </div>
             </div>
@@ -165,65 +178,97 @@
     </div>
 </div>
 
-<script>
-    let rowCount = {{ $rowCount ?? 1 }};
+@push('script')
 
-    function calculateTotals() {
-        let totalDebit = 0, totalCredit = 0;
-        document.querySelectorAll('.debit').forEach(input => {
-            totalDebit += parseFloat(input.value) || 0;
+
+<script>
+    let rowCount = {{ $rowCount }};
+
+   function calculateTotals() {
+    let totalDebit = 0;
+    let totalCredit = 0;
+
+    document.querySelectorAll('#entries-body tr').forEach(row => {
+        const debit = parseFloat(row.querySelector('.debit')?.value) || 0;
+        const credit = parseFloat(row.querySelector('.credit')?.value) || 0;
+
+        totalDebit += debit;
+        totalCredit += credit;
+    });
+
+    document.getElementById('total-debit').value = totalDebit.toFixed(2);
+    document.getElementById('total-credit').value = totalCredit.toFixed(2);
+}
+
+    function addListenersToRow(row) {
+        // Recalculate totals live on user input
+        row.querySelectorAll('.debit, .credit').forEach(input => {
+            input.addEventListener('input', () => {
+                calculateTotals();
+            });
         });
-        document.querySelectorAll('.credit').forEach(input => {
-            totalCredit += parseFloat(input.value) || 0;
+
+        // Remove row and recalculate
+        row.querySelector('.remove-row').addEventListener('click', () => {
+            row.remove();
+            calculateTotals();
         });
-        document.getElementById('total-debit').value = totalDebit.toFixed(2);
-        document.getElementById('total-credit').value = totalCredit.toFixed(2);
+
+        // Initialize Select2 dropdown
+        $(row).find('.select2').select2({
+            placeholder: 'Select Account',
+            allowClear: true,
+            width: '100%'
+        });
     }
 
+    // Add new row dynamically
     document.getElementById('add-row').addEventListener('click', () => {
-        const tableBody = document.getElementById('entries-body');
+        const tbody = document.getElementById('entries-body');
         const newRow = document.createElement('tr');
+
         newRow.innerHTML = `
             <td>
-                <select name="entries[${rowCount}][accountscode]" class="form-control">
-                    @foreach ($ac_cartofacc as $ac_cartofaccs)
-                        <option value="{{ $ac_cartofaccs->accountscode }}">{{ $ac_cartofaccs->accountsheadname }}</option>
+                <select name="entries[${rowCount}][accountscode]" class="form-control select2">
+                    @foreach ($ac_cartofacc as $acc)
+                        <option value="{{ $acc->accountscode }}">{{ $acc->accountsheadname }}</option>
                     @endforeach
                 </select>
             </td>
             <td><input type="text" name="entries[${rowCount}][naration]" class="form-control"></td>
             <td><input type="number" name="entries[${rowCount}][debit]" class="form-control debit" value="0" step="0.01"></td>
             <td><input type="number" name="entries[${rowCount}][credit]" class="form-control credit" value="0" step="0.01"></td>
-            <td><button type="button" class="btn btn-danger remove-row">-</button></td>
+            <td>
+                <button type="button" class="btn btn-danger remove-row" title="Remove">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </td>
         `;
-        tableBody.appendChild(newRow);
+
+        tbody.appendChild(newRow);
+        addListenersToRow(newRow);
         rowCount++;
-        addListenersToNewInputs(newRow);
+        calculateTotals(); // Recalculate on adding new row
+    });
+
+    // Initial setup
+    window.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('#entries-body tr').forEach(row => {
+            addListenersToRow(row);
+        });
+
         calculateTotals();
-    });
 
-    function addListenersToNewInputs(row) {
-        row.querySelectorAll('.debit, .credit').forEach(input => {
-            input.addEventListener('input', calculateTotals);
-        });
-
-        row.querySelector('.remove-row').addEventListener('click', () => {
-            row.remove();
-            calculateTotals();
-        });
-    }
-
-    document.querySelectorAll('.debit, .credit').forEach(input => {
-        input.addEventListener('input', calculateTotals);
-    });
-
-    document.querySelectorAll('.remove-row').forEach(btn => {
-        btn.addEventListener('click', function() {
-            this.closest('tr').remove();
-            calculateTotals();
+        $('.select2').select2({
+            placeholder: 'Select Account',
+            allowClear: true,
+            width: '100%'
         });
     });
-
-    window.addEventListener('DOMContentLoaded', calculateTotals);
 </script>
+
+
+
+@endpush
+
 @endsection

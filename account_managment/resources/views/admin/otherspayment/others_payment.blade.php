@@ -1,6 +1,7 @@
 @extends('master')
 
 @section('content')
+
 <div class="container">
     <div class="row" style="height: 80vh; display: flex; justify-content: center; align-items: center;">
         <div class="col-md-6">

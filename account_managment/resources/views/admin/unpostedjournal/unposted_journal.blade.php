@@ -80,7 +80,7 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4 class="panel-title" style="display: inline-block; margin-right: 15px; vertical-align: middle;">Data Table</h4>
+                    <h4 class="panel-title" style="display: inline-block; margin-right: 15px; vertical-align: middle;">Unposted Journal</h4>
                     <div id="datatable-header-controls" class="panel-heading-controls">
                         <input type="text" id="customSearchInput" class="form-control" placeholder="Search...">
                         <button id="customSearchButton" class="btn btn-default"><i class="fa fa-search"></i></button>

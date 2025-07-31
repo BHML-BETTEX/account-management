@@ -564,13 +564,16 @@ class AccuntingController extends Controller
 
             $amount = abs(floatval($request->input('amount')));
             $accountscode = $request->input('accountscode');
-            $narration = "hi";
+            $naration =$request->input('particulars') . ' | ' .
+                $request->input('credit_note_no') . ' | ' .
+                'Date: ' . $request->input('dateoftransaction') . ' | ' .
+                'Supplier ID: ' . $request->input('partycode');
 
             // Debit row
             AcTransactionDetail::create([
                 'voucherno' => $main->voucherno,
                 'accountscode' => 2020000,
-                'naration' => $narration,
+                'naration' => $naration,
                 'debit' => $amount,
                 'credit' => 0,
             ]);
@@ -579,7 +582,7 @@ class AccuntingController extends Controller
             AcTransactionDetail::create([
                 'voucherno' => $main->voucherno,
                 'accountscode' => 1000100,
-                'naration' => $narration,
+                'naration' => $naration,
                 'debit' => 0,
                 'credit' => $amount,
             ]);

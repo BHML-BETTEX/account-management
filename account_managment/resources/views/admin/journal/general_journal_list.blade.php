@@ -69,10 +69,10 @@
         <div class="row align-items-center g-2">
             <!-- Button Group -->
             <div class="col-lg-6 col-md-12 mb-2 d-flex flex-wrap gap-2">
-                <a href="{{ route('general_journal') }}" class="btn btn-primary text-white">
-                    New Account
+                <a href="{{ route('general_journal') }}" class="btn mright5 btn-info pull-left display-block">
+                    New Journal
                 </a>
-            </div>
+            </div><hr>
         </div>
     </div>
 

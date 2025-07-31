@@ -83,20 +83,21 @@
         <div class="row align-items-center g-2">
 
             <!-- Button Group -->
-            <div class="col-lg-6 col-md-12 mb-3 d-flex flex-wrap gap-2">
+            <div class="col-lg-6 col-md-12 col-sm-12 mb-3 d-flex flex-wrap gap-2">
                 <div class="row">
                     <div class="col-lg-5">
-                        <button type="button" class="btn btn-primary px-4 py-2" data-toggle="modal" data-target="#printview">
+                        <button type="button" class="btn mright5 btn-info pull-left display-block" data-toggle="modal" data-target="#printview">
                             Print View
                         </button>
                     </div>
                     <div class="col-lg-6">
-                        <button type="button" class="btn btn-primary px-4 py-2" data-toggle="modal" data-target="#account-modal">
+                        <button type="button" class="btn mright5 btn-info pull-left display-block" data-toggle="modal" data-target="#account-modal">
                             New Account
                         </button>
                     </div>
                 </div>
             </div>
+            <hr>
         </div>
     </div>
 
@@ -104,9 +105,9 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div class="panel panel-default" style="background-color: #fff; padding: 20px; border-radius: 8px;">
+            <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4 class="panel-title" style="display: inline-block; margin-right: 15px; vertical-align: middle;">Data Table</h4>
+                    <h6 class="panel-title" style="display: inline-block; margin-right: 15px; vertical-align: middle;">Chart of Account</h6>
                     <div id="datatable-header-controls" class="panel-heading-controls">
                         <input type="text" id="customSearchInput" class="form-control" placeholder="Search...">
                         <button id="customSearchButton" class="btn btn-default"><i class="fa fa-search"></i></button>
@@ -175,7 +176,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Add Accountsss</h4>
+                <h4 class="modal-title">Add Accounts</h4>
             </div>
             <form action="{{route('chart_of_account_store')}}" method="post" accept-charset="utf-8">
                 @csrf
@@ -184,7 +185,7 @@
                     <div class="form-group">
                         <label for="mainheadcode" class="control-label">Main Head</label>
                         <select id="mainheadcode" name="mainheadcode" class="form-control select2" data-width="100%" data-placeholder="Select Main Head">
-                            <option></option>
+                            <option>Select Main Head</option>
                             @foreach($main_head as $key => $main_heads)
                             <option value="{{ $main_heads->mainheadcode }}">
                                 {{ $main_heads->mainheadname }}
@@ -265,31 +266,58 @@
 
 
 
-<!-- Edit Account Modal  -->
+<!-- Edit Account Modal -->
 <div class="modal fade" id="account-modaledit">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Edit Account</h4>
-            </div>
-            <form action="{{ route('chart_of_account_update') }}" method="post">
+            <form action="{{ route('chart_of_account_update') }}" method="POST">
                 @csrf
+                <div class="modal-header">
+                    <h4 class="modal-title">Edit Account</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+
                 <div class="modal-body">
                     <input type="hidden" name="id" id="edit_id">
-                    <div class="form-group" app-field-wrapper="name"><label for="name" class="control-label">Account Head:</label>
+
+                    <div class="form-group">
+                        <label for="edit_mainheadcode" class="control-label">Main Head</label>
+                        <select id="edit_mainheadcode" name="mainheadcode" class="form-control select2" data-width="100%" data-placeholder="Select Main Head">
+                            <option value="">Select Mainhead</option>
+                            @foreach($main_head as $main_heads)
+                                <option value="{{ $main_heads->mainheadcode }}">
+                                    {{ $main_heads->mainheadname }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit_accountsheadname" class="control-label">Account Head:</label>
                         <input type="text" name="accountsheadname" id="edit_accountsheadname" class="form-control">
                     </div>
-                </div>
+
+                    <div class="form-group">
+                        <label for="edit_category" class="control-label">Category</label>
+                        <select name="category" id="edit_category" class="selectpicker form-control" data-width="100%">
+                            <option value="">Select</option>
+                            @foreach($ac_category as $ac_categorys)
+                                <option value="{{ $ac_categorys->short_name }}">{{ $ac_categorys->long_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div> <!-- /modal-body -->
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-info btn-submit">Update</button>
                 </div>
+            </form>
         </div>
-        </form>
     </div>
 </div>
-</div>
+
+
 
 <!-- Add MainHead -->
 <div class="modal fade" id="mainhead">
@@ -472,7 +500,6 @@
             }
         });
     });
-    
 </script>
 
 <script>
@@ -492,6 +519,30 @@
             });
         });
     });
+
+     document.addEventListener('DOMContentLoaded', function() {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true,
+            showClass: {
+                popup: 'swal2-noanimation', // disables bounce
+                backdrop: 'swal2-noanimation'
+            },
+            hideClass: {
+                popup: '', // fade out by default
+            }
+        });
+
+        Toast.fire({
+            icon: 'success',
+            title: `{!! session('success') !!}`
+        });
+    });
 </script>
+
+
 
 @endpush
