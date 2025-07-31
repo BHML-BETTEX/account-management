@@ -1,9 +1,9 @@
 @extends('master')
 
 @section('content')
-<div class="contain">
-    <div class="widget-content">
-        <div class="col-md-6">
+<div class="container">
+    <div class="row" style="height: 70vh; display: flex; justify-content: center; align-items: center;">
+        <div class="col-md-6 col-lg-6 col-sm-12">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Credit Note Entry</h4>
@@ -25,47 +25,34 @@
                         <!-- Supplier / Party -->
                         <div class="form-group">
                             <label>Account Head</label>
-                            <select name="partycode" class="form-control" required>
+                            <select name="partycode" class="form-control select2" id="partycode" required>
                                 @foreach($supplier_info as $supplier)
                                 <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
                                 @endforeach
                             </select>
                         </div>
 
-                        <!-- Account Codes -->
+                        <!-- Credit Notes -->
                         <div class="form-group">
-                            <label>Accounts Code</label>
-                            <input type="text" name="accountscode" class="form-control" required>
+                            <label>Credit Note No</label>
+                            <input type="text" name="credit_note_no" class="form-control" required>
                         </div>
-
                         <!-- Amount -->
                         <div class="form-group">
                             <label>Amount</label>
-                            <input type="number" step="0.01" name="entries[0][debit] entries[1][credit]" class="form-control" required>
-                        </div>
-
-
-                        <div class="form-group">
-                            <label>Amount</label>
-                            <input type="number" step="0.01" name="amount" class="form-control" required>
+                            <input type="text" name="amount" class="form-control" required>
                         </div>
 
                         <!-- Narration -->
                         <div class="form-group">
-                            <label>Narration</label>
-                            <textarea name="naration" class="form-control" rows="3"></textarea>
+                            <label>Memo</label>
+                            <textarea name="particulars" class="form-control" rows="3"></textarea>
                         </div>
 
-                        <!-- Particulars -->
-                        <div class="form-group">
-                            <label>Particulars</label>
-                            <input type="text" name="particulars" class="form-control">
-                        </div>
                     </div>
 
                     <!-- Submit -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-info">Save Credit Note</button>
                     </div>
                 </form>
@@ -74,3 +61,17 @@
     </div>
 </div>
 @endsection
+
+@push('script')
+<script>
+    $(document).ready(function() {
+        $('#partycode').select2({
+            placeholder: 'Select Debit Account',
+            allowClear: true,
+            width: '100%'
+        });
+
+    });
+</script>
+
+@endpush

@@ -1,8 +1,8 @@
 @extends('master')
 
 @section('content')
-<div class="contain">
-    <div class="widget-content" style="margin: auto;">
+<div class="container">
+    <div class="row" style="height: 80vh; display: flex; justify-content: center; align-items: center;">
         <div class="col-md-6">
             <div class="modal-content">
                 <div class="modal-header">
@@ -33,6 +33,7 @@
                             </select>
                             <p class="text-center">(Salary, Utility Bills, Rent, Stationary, etc.)</p>
                         </div>
+
 
                         <div class="form-group">
                             <label>Amount</label>

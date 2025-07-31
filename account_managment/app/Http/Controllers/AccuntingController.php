@@ -549,26 +549,27 @@ class AccuntingController extends Controller
 
         try {
             $main = AcTransactionMain::create([
-                'selfid' => $request->input('selfid'),
                 'dateoftransaction' => $request->input('dateoftransaction'),
                 'trcode' => 3,
                 'vouchertype' => 3,
                 'particulars' => $request->input('particulars'),
-                'partytype' => $request->input('partytype'),
+                'partytype' => 1,
                 'partycode' => $request->input('partycode'),
                 'created_at' => now(),
             ]);
 
             $main->refresh();
+            $main->selfid = $main->id;
+            $main->save();
 
             $amount = abs(floatval($request->input('amount')));
             $accountscode = $request->input('accountscode');
-            $narration = $request->input('naration') ?? '';
+            $narration = "hi";
 
             // Debit row
             AcTransactionDetail::create([
                 'voucherno' => $main->voucherno,
-                'accountscode' => $accountscode,
+                'accountscode' => 2020000,
                 'naration' => $narration,
                 'debit' => $amount,
                 'credit' => 0,
@@ -577,7 +578,7 @@ class AccuntingController extends Controller
             // Credit row
             AcTransactionDetail::create([
                 'voucherno' => $main->voucherno,
-                'accountscode' => $accountscode,
+                'accountscode' => 1000100,
                 'naration' => $narration,
                 'debit' => 0,
                 'credit' => $amount,
