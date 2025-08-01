@@ -5,7 +5,6 @@
     <div class="panel-body" style="background: #fff; border-radius: 8px; padding: 20px;">
         <h4 class="no-margin font-bold mb-4">Trail Balance</h4>
         <hr />
-
         <div class="row mb-4 align-items-end">
             <form id="balanceForm" class="form-inline col-md-6 d-flex flex-wrap gap-3">
                 <div class="form-group mr-3">

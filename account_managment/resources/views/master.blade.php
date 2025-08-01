@@ -15,6 +15,7 @@
   <link rel="stylesheet" type="text/css" id="vendor-css" href="{{ asset('assets/builds/vendor-admin.css') }}">
   <link rel="stylesheet" type="text/css" id="app-css" href="{{ asset('assets/css/style.min.css') }}">
   <link rel="stylesheet" type="text/css" id="full-calendar-css" href="{{ asset('assets/plugins/fullcalendar/fullcalendar.min.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <!-- Bootstrap CSS -->
   {{-- Bootstrap CSS (Make sure this matches the version your master uses, e.g., Bootstrap 3) --}}
@@ -28,8 +29,7 @@
   {{-- DataTables Buttons Extension CSS --}}
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css" />
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-
+  
   <!-- Scripts -->
 
   <script>
@@ -304,17 +304,12 @@
 <body class="app admin dashboard invoices-total-manual user-id-30 chrome">
   <div id="header">
     <div class="hide-menu"><i class="fa fa-align-left"></i></div>
-    <div id="logo">
-      <a href="" class="logo img-responsive">
-        <img src="https://democrm.i2technologies.net/uploads/company/b20cab9d0ff145d884c70f2de81e77cc.jpg" class="img-responsive" alt="i2Technologies Limited">
-      </a>
+    <div id="logo" style="color: white;">
+      <h4 >Accounts Managment System</h4>
     </div>
     <nav>
-      <div class="small-logo">
-        <span class="text-primary">
-          <a href="https://democrm.i2technologies.net/admin/" class="logo img-responsive">
-            <img src="https://democrm.i2technologies.net/uploads/company/b20cab9d0ff145d884c70f2de81e77cc.jpg" class="img-responsive" alt="i2Technologies Limited">
-          </a> </span>
+      <div class="small-logo" style="color: white;">
+        <h4>Accounts Managment System</h4>
       </div>
       <div class="mobile-menu">
         <button type="button" class="navbar-toggle visible-md visible-sm visible-xs mobile-menu-toggle collapsed" data-toggle="collapse" data-target="#mobile-collapse" aria-expanded="false">
@@ -381,28 +376,28 @@
         <ul class="nav nav-second-level collapse" aria-expanded="false">
           <li class="sub-menu-item-vendors">
             <a href="{{route('chart_of_account')}}">
-              <i class="fa fa-user-o menu-icon"></i>
+              <i class="fa fa-list-ol menu-icon"></i>
               <span class="sub-menu-text">
                 Chart Of Accounts</span>
             </a>
           </li>
           <li class="sub-menu-item-purchase-items">
             <a href="{{route('general_journal_list')}}">
-              <i class="fa fa-clone menu-icon menu-icon"></i>
+              <i class="fa fa-book menu-icon"></i>
               <span class="sub-menu-text">Genaral Journal</span>
             </a>
           </li>
 
           <li class="sub-menu-item-purchase-items">
             <a href="{{route('adjustment_journal')}}">
-              <i class="fa fa-clone menu-icon menu-icon"></i>
+              <i class="fa fa-sliders menu-icon"></i>
               <span class="sub-menu-text">Adjust Journal</span>
             </a>
           </li>
 
           <li class="sub-menu-item-purchase-items">
             <a href="{{route('unposted_journal')}}">
-              <i class="fa fa-clone menu-icon menu-icon"></i>
+              <i class="fa fa-exchange menu-icon"></i>
               <span class="sub-menu-text">Upnosted Journal</span>
             </a>
           </li>
@@ -416,7 +411,7 @@
 
           <li class="sub-menu-item-purchase-items">
             <a href="{{route('credit_note')}}">
-              <i class="fa fa-clone menu-icon menu-icon"></i>
+              <i class="fa fa-sitemap"></i>
               <span class="sub-menu-text">Credit Note Entry</span>
             </a>
           </li>
@@ -570,7 +565,7 @@
 
           <li class="sub-menu-item-purchase-items">
             <a href="{{route('profit_loss')}}">
-              <i class="fa fa-clone menu-icon menu-icon"></i>
+              <i class="fa fa-adjust menu-icon"></i>
               <span class="sub-menu-text">
                 Profite & Loss Accounts</span>
             </a>
@@ -726,6 +721,8 @@
   <script type="text/javascript" id="app-js" src="{{ asset('assets/js/main.min.js') }}"></script>
   <script type="text/javascript" id="full-calendar-js" src="{{ asset('assets/plugins/fullcalendar/fullcalendar.min.js') }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
 
   <script>
     function custom_fields_hyperlink() {
@@ -1383,7 +1380,7 @@
                 </a>
               </li>
 
-              <li class="sub-menu-item-purchase-items">
+               <li class="sub-menu-item-purchase-items">
                 <a href="{{route('credit_note')}}">
                   <i class="fa fa-clone menu-icon menu-icon"></i>
                   <span class="sub-menu-text">Credit Note Entry</span>
